@@ -3,6 +3,7 @@ import Client from '../models/Client.js'
 import Project from '../models/Project.js'
 import Invoice from '../models/Invoice.js'
 import { protect } from '../middleware/auth.js'
+import { clientValidator, validate, paginateQuery } from '../middleware/validate.js'
 
 const router = express.Router()
 
@@ -69,7 +70,7 @@ router.get('/:id', protect, async (req, res) => {
 // @route   POST /api/clients
 // @desc    Create new client
 // @access  Private (Admin only)
-router.post('/', protect, async (req, res) => {
+router.post('/', protect, clientValidator, validate, async (req, res) => {
   try {
     const client = await Client.create(req.body)
     res.status(201).json(client)

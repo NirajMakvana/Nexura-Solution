@@ -1,6 +1,7 @@
 import express from 'express'
 import Attendance from '../models/Attendance.js'
 import { protect } from '../middleware/auth.js'
+import { clockInValidator, validate, paginateQuery } from '../middleware/validate.js'
 
 const router = express.Router()
 
@@ -33,9 +34,10 @@ router.get('/my-records', async (req, res) => {
 // @route   GET /api/attendance
 // @desc    Get attendance records
 // @access  Private
-router.get('/', async (req, res) => {
+router.get('/', paginateQuery, async (req, res) => {
   try {
     const { employee, startDate, endDate } = req.query
+    const { page, limit, skip } = req.pagination
 
     let query = {}
     if (employee) query.employee = employee
@@ -43,11 +45,16 @@ router.get('/', async (req, res) => {
       query.date = { $gte: new Date(startDate), $lte: new Date(endDate) }
     }
 
-    const attendance = await Attendance.find(query)
-      .populate('employee', 'firstName lastName employeeId')
-      .sort({ date: -1 })
+    const [attendance, total] = await Promise.all([
+      Attendance.find(query)
+        .populate('employee', 'firstName lastName employeeId')
+        .sort({ date: -1 })
+        .skip(skip)
+        .limit(limit),
+      Attendance.countDocuments(query)
+    ])
 
-    res.json(attendance)
+    res.json({ data: attendance, total, page, limit, pages: Math.ceil(total / limit) })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
@@ -56,7 +63,7 @@ router.get('/', async (req, res) => {
 // @route   POST /api/attendance/clock-in
 // @desc    Clock in
 // @access  Private
-router.post('/clock-in', async (req, res) => {
+router.post('/clock-in', clockInValidator, validate, async (req, res) => {
   try {
     const { employee, location } = req.body
     const now = new Date();

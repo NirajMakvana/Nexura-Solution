@@ -20,6 +20,7 @@ import AdminLayout from '../../components/admin/AdminLayout'
 import { adminService } from '../../services/adminService'
 import { toast } from 'react-hot-toast'
 import { TableSkeleton } from '../../components/ui/Skeleton'
+import ConfirmModal from '../../components/ui/ConfirmModal'
 
 const JobManagement = () => {
     const [activeTab, setActiveTab] = useState('jobs') // 'jobs' or 'applications'
@@ -35,6 +36,7 @@ const JobManagement = () => {
     const [showAppModal, setShowAppModal] = useState(false)
     const [selectedJob, setSelectedJob] = useState(null)
     const [selectedApp, setSelectedApp] = useState(null)
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
 
     // Job Form State
     const [formData, setFormData] = useState({
@@ -133,8 +135,9 @@ const JobManagement = () => {
         }
     }
 
-    const handleDeleteJob = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this job posting? This may leave orphaned applications.')) return
+    const handleDeleteJob = async () => {
+        const id = confirmModal.id
+        setConfirmModal({ isOpen: false, id: null })
         setActionLoading(true)
         try {
             await adminService.deleteJob(id)
@@ -167,11 +170,11 @@ const JobManagement = () => {
     const filteredData = activeTab === 'jobs'
         ? jobs.filter(j =>
             (filterStatus === 'all' || j.status === filterStatus) &&
-            (j.title.toLowerCase().includes(searchTerm.toLowerCase()) || j.department.toLowerCase().includes(searchTerm.toLowerCase()))
+            ((j.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (j.department?.toLowerCase() || '').includes(searchTerm.toLowerCase()))
         )
         : applications.filter(a =>
             (filterStatus === 'all' || a.status === filterStatus) &&
-            (a.firstName.toLowerCase().includes(searchTerm.toLowerCase()) || a.lastName.toLowerCase().includes(searchTerm.toLowerCase()) || a.email.toLowerCase().includes(searchTerm.toLowerCase()))
+            ((a.firstName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (a.lastName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (a.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()))
         )
 
     const stats = {
@@ -192,10 +195,11 @@ const JobManagement = () => {
     }
 
     return (
+        <>
         <AdminLayout>
-            <div>
+            <div className="p-1 md:p-6 space-y-8 animate-fade-in">
                 {/* Header */}
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Career & Recruitment</h1>
                         <p className="text-gray-600 mt-1">Manage job postings and applications</p>
@@ -211,7 +215,7 @@ const JobManagement = () => {
                 </div>
 
                 {/* Tab Navigation */}
-                <div className="flex gap-4 mb-6 border-b border-gray-200">
+                <div className="flex gap-4 border-b border-gray-200">
                     <button
                         onClick={() => { setActiveTab('jobs'); setSearchTerm(''); setFilterStatus('all') }}
                         className={`pb-3 px-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'jobs' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
@@ -227,21 +231,21 @@ const JobManagement = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                     {[
                         { label: 'Total Postings', value: stats.totalJobs, color: 'blue', icon: Briefcase },
                         { label: 'Active Postings', value: stats.openJobs, color: 'green', icon: CheckCircle },
                         { label: 'Total Applications', value: stats.totalApps, color: 'purple', icon: Users },
                         { label: 'Pending Reviews', value: stats.pendingApps, color: 'yellow', icon: Clock },
                     ].map((stat, i) => (
-                        <div key={i} className="bg-white rounded-xl shadow-sm border p-5">
+                        <div key={i} className="bg-white p-6 rounded-xl shadow-sm border">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-500">{stat.label}</p>
-                                    <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                                    <p className="text-sm text-gray-600">{stat.label}</p>
+                                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                                 </div>
                                 <div className={`p-3 rounded-lg bg-${stat.color}-100`}>
-                                    <stat.icon className={`w-5 h-5 text-${stat.color}-600`} />
+                                    <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
                                 </div>
                             </div>
                         </div>
@@ -249,7 +253,7 @@ const JobManagement = () => {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white rounded-xl shadow-sm border p-4 mb-6 flex flex-col md:flex-row gap-4">
+                <div className="bg-white rounded-xl shadow-sm border p-4 flex flex-col md:flex-row gap-4">
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
@@ -261,11 +265,10 @@ const JobManagement = () => {
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-gray-500" />
                         <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
-                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="all">All Statuses</option>
                             {activeTab === 'jobs' ? (
@@ -297,73 +300,80 @@ const JobManagement = () => {
                     </div>
                 ) : (
                     <div className="bg-white shadow-sm border rounded-xl overflow-hidden hidden md:block">
-                        <table className="w-full text-left text-sm whitespace-nowrap">
-                            <thead className="bg-gray-50 text-gray-500 border-b">
+                        <table className="w-full">
+                            <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
                                     {activeTab === 'jobs' ? (
                                         <>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Job Role</th>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Department</th>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Status</th>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Posted Date</th>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Actions</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Job Role</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Department</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Posted Date</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                                         </>
                                     ) : (
                                         <>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Applicant</th>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Job Applied</th>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Exp.</th>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Status</th>
-                                            <th className="px-6 py-4 font-medium uppercase tracking-wider">Actions</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Applicant</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Job Applied</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Exp.</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                                         </>
                                     )}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {filteredData.map(item => (
-                                    <tr key={item._id} className="hover:bg-gray-50">
+                                    <tr key={item._id} className="hover:bg-gray-50/50 transition-colors">
                                         {activeTab === 'jobs' ? (
                                             <>
-                                                <td className="px-6 py-4">
-                                                    <p className="font-semibold text-gray-900">{item.title}</p>
-                                                    <div className="flex items-center text-xs text-gray-500 mt-1">
-                                                        <MapPin className="w-3 h-3 mr-1" /> {item.location}
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm font-medium text-gray-900">{item.title}</div>
+                                                    <div className="text-sm text-gray-500 flex items-center mt-0.5">
+                                                        <MapPin className="w-3 h-3 mr-1" />{item.location}
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4">{item.department}</td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>{item.status}</span>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm text-gray-900">{item.department}</div>
                                                 </td>
-                                                <td className="px-6 py-4 text-gray-500">{new Date(item.createdAt).toLocaleDateString()}</td>
-                                                <td className="px-6 py-4">
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>{item.status}</span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm text-gray-900">{new Date(item.createdAt).toLocaleDateString()}</div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                     <div className="flex gap-2">
-                                                        <button onClick={() => handleOpenJobModal(item)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"><Edit2 className="w-4 h-4" /></button>
-                                                        <button onClick={() => handleDeleteJob(item._id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded"><Trash2 className="w-4 h-4" /></button>
+                                                        <button onClick={() => handleOpenJobModal(item)} className="bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors"><Edit2 className="w-4 h-4" /></button>
+                                                        <button onClick={() => setConfirmModal({ isOpen: true, id: item._id })} className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors"><Trash2 className="w-4 h-4" /></button>
                                                     </div>
                                                 </td>
                                             </>
                                         ) : (
                                             <>
-                                                <td className="px-6 py-4">
-                                                    <p className="font-semibold text-gray-900">{item.firstName} {item.lastName}</p>
-                                                    <p className="text-xs text-gray-500">{item.email}</p>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm font-medium text-gray-900">{item.firstName} {item.lastName}</div>
+                                                    <div className="text-sm text-gray-500">{item.email}</div>
                                                 </td>
-                                                <td className="px-6 py-4 text-gray-700">{item.job?.title || 'General / Unknown'}</td>
-                                                <td className="px-6 py-4 text-gray-700">{item.experience}</td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>{item.status}</span>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm text-gray-900">{item.job?.title || 'General / Unknown'}</div>
                                                 </td>
-                                                <td className="px-6 py-4 border-l">
-                                                    <div className="flex items-center gap-1">
-                                                        <button onClick={() => { setSelectedApp(item); setShowAppModal(true); }} className="p-1.5 text-gray-600 hover:bg-gray-100 rounded title-tooltip" title="View Details">
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm text-gray-900">{item.experience}</div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>{item.status}</span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <div className="flex items-center gap-2">
+                                                        <button onClick={() => { setSelectedApp(item); setShowAppModal(true); }} className="bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors" title="View Details">
                                                             <Eye className="w-4 h-4" />
                                                         </button>
                                                         {item.status !== 'Shortlisted' && item.status !== 'Hired' && (
                                                             <button
                                                                 onClick={() => handleUpdateAppStatus(item._id, 'Shortlisted')}
                                                                 disabled={actionLoading}
-                                                                className="px-2 py-1 text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 rounded font-medium transition disabled:opacity-50"
-                                                                title="Shortlist"
+                                                                className="bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 text-xs font-medium"
                                                             >
                                                                 Shortlist
                                                             </button>
@@ -372,8 +382,7 @@ const JobManagement = () => {
                                                             <button
                                                                 onClick={() => handleUpdateAppStatus(item._id, 'Hired')}
                                                                 disabled={actionLoading}
-                                                                className="px-2 py-1 text-xs bg-green-50 text-green-700 hover:bg-green-100 rounded font-medium transition disabled:opacity-50"
-                                                                title="Hire"
+                                                                className="bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors disabled:opacity-50 text-xs font-medium"
                                                             >
                                                                 Hire
                                                             </button>
@@ -382,8 +391,7 @@ const JobManagement = () => {
                                                             <button
                                                                 onClick={() => handleUpdateAppStatus(item._id, 'Rejected')}
                                                                 disabled={actionLoading}
-                                                                className="px-2 py-1 text-xs bg-red-50 text-red-700 hover:bg-red-100 rounded font-medium transition disabled:opacity-50"
-                                                                title="Reject"
+                                                                className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 text-xs font-medium"
                                                             >
                                                                 Reject
                                                             </button>
@@ -479,7 +487,7 @@ const JobManagement = () => {
                                     <div className="flex gap-4">
                                         {selectedApp.linkedinProfile && <a href={selectedApp.linkedinProfile} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline flex items-center text-sm"><FileText className="w-4 h-4 mr-1" /> LinkedIn Profile</a>}
                                         {selectedApp.portfolio && <a href={selectedApp.portfolio} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline flex items-center text-sm"><FileText className="w-4 h-4 mr-1" /> Portfolio URL</a>}
-                                        {selectedApp.resumeUrl && <a href={`http://localhost:5002${selectedApp.resumeUrl}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline flex items-center font-medium bg-indigo-50 px-3 py-1.5 rounded-md"><FileText className="w-4 h-4 mr-2" /> View Attached Resume</a>}
+                                        {selectedApp.resumeUrl && <a href={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5002'}${selectedApp.resumeUrl}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline flex items-center font-medium bg-indigo-50 px-3 py-1.5 rounded-md"><FileText className="w-4 h-4 mr-2" /> View Attached Resume</a>}
                                     </div>
                                 )}
 
@@ -513,6 +521,15 @@ const JobManagement = () => {
 
             </div>
         </AdminLayout>
+        <ConfirmModal
+            isOpen={confirmModal.isOpen}
+            title="Delete Job Posting"
+            message="Are you sure you want to delete this job posting? This may affect existing applications."
+            confirmText="Delete"
+            onConfirm={handleDeleteJob}
+            onCancel={() => setConfirmModal({ isOpen: false, id: null })}
+        />
+        </>
     )
 }
 

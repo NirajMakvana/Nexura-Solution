@@ -10,7 +10,7 @@ export const useAuthStore = create(
             isLoading: false,
             error: null,
 
-            setAuth: (token, user) => set({
+            login: (token, user) => set({
                 token,
                 user,
                 isAuthenticated: true,
@@ -18,29 +18,17 @@ export const useAuthStore = create(
                 error: null
             }),
 
-            login: (token, user) => {
-                set({
-                    token,
-                    user,
-                    isAuthenticated: true,
-                    isLoading: false,
-                    error: null
-                })
-            },
-
             logout: () => {
+                // Clear all related storage keys
+                localStorage.removeItem('currentEmployee')
+                localStorage.removeItem('employeeAuthenticated')
+                sessionStorage.removeItem('adminAuthenticated')
                 set({
                     user: null,
                     token: null,
                     isAuthenticated: false,
                     error: null
                 })
-                // Clear other storage items
-                localStorage.removeItem('token')
-                localStorage.removeItem('user')
-                localStorage.removeItem('currentEmployee')
-                localStorage.removeItem('employeeAuthenticated')
-                sessionStorage.removeItem('adminAuthenticated')
             },
 
             setLoading: (loading) => set({ isLoading: loading }),
@@ -50,7 +38,7 @@ export const useAuthStore = create(
             }))
         }),
         {
-            name: 'nexura-auth', // This matches what api.js looks for
+            name: 'nexura-auth',
         }
     )
 )

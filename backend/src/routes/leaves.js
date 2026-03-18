@@ -3,6 +3,7 @@ import Leave from '../models/Leave.js'
 import { protect, authorize } from '../middleware/auth.js'
 import { emailService } from '../utils/emailService.js'
 import { createNotification } from './notifications.js'
+import { leaveValidator, validate, paginateQuery } from '../middleware/validate.js'
 
 const router = express.Router()
 
@@ -26,20 +27,26 @@ router.get('/my-leaves', async (req, res) => {
 // @route   GET /api/leaves
 // @desc    Get all leave requests
 // @access  Private
-router.get('/', async (req, res) => {
+router.get('/', paginateQuery, async (req, res) => {
   try {
     const { employee, status } = req.query
+    const { page, limit, skip } = req.pagination
 
     let query = {}
     if (employee) query.employee = employee
     if (status) query.status = status
 
-    const leaves = await Leave.find(query)
-      .populate('employee', 'firstName lastName employeeId')
-      .populate('approvedBy', 'firstName lastName')
-      .sort({ createdAt: -1 })
+    const [leaves, total] = await Promise.all([
+      Leave.find(query)
+        .populate('employee', 'firstName lastName employeeId')
+        .populate('approvedBy', 'firstName lastName')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Leave.countDocuments(query)
+    ])
 
-    res.json(leaves)
+    res.json({ data: leaves, total, page, limit, pages: Math.ceil(total / limit) })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
@@ -48,7 +55,7 @@ router.get('/', async (req, res) => {
 // @route   POST /api/leaves
 // @desc    Create leave request
 // @access  Private
-router.post('/', async (req, res) => {
+router.post('/', leaveValidator, validate, async (req, res) => {
   try {
     const leave = await Leave.create(req.body)
 

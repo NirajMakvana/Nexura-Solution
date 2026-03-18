@@ -16,8 +16,10 @@ import AdminLayout from '../../components/admin/AdminLayout'
 import { adminService } from '../../services/adminService'
 import { toast } from 'react-hot-toast'
 import { TableSkeleton } from '../../components/ui/Skeleton'
+import ConfirmModal from '../../components/ui/ConfirmModal'
 
 const ReviewManagement = () => {
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
@@ -71,8 +73,12 @@ const ReviewManagement = () => {
   }
 
   const handleDelete = async (reviewId) => {
-    if (!confirm('Are you sure you want to delete this review?')) return
+    setConfirmModal({ isOpen: true, id: reviewId })
+  }
 
+  const handleConfirmDelete = async () => {
+    const reviewId = confirmModal.id
+    setConfirmModal({ isOpen: false, id: null })
     setActionLoading(true)
     try {
       await adminService.deleteReview(reviewId)
@@ -128,6 +134,7 @@ const ReviewManagement = () => {
   }
 
   return (
+    <>
     <AdminLayout>
       <div className="p-1 md:p-6 space-y-8 animate-fade-in">
         {/* Header */}
@@ -275,25 +282,23 @@ const ReviewManagement = () => {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Reviewer</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Rating</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Comment</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Reviewer</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Rating</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Comment</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {filteredReviews.map((review) => (
-                      <tr key={review._id} className="hover:bg-gray-50/50 transition-colors group">
-                        <td className="px-6 py-4">
-                          <div>
-                            <p className="font-semibold text-gray-900 text-sm">{review.name}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{review.email}</p>
-                            {(review.company || review.service) && (
-                              <p className="text-xs text-gray-400 mt-0.5">{[review.company, review.service].filter(Boolean).join(' • ')}</p>
-                            )}
-                          </div>
+                      <tr key={review._id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{review.name}</div>
+                          <div className="text-sm text-gray-500">{review.email}</div>
+                          {(review.company || review.service) && (
+                            <div className="text-xs text-gray-400 mt-0.5">{[review.company, review.service].filter(Boolean).join(' • ')}</div>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {renderStars(review.rating)}
@@ -302,22 +307,20 @@ const ReviewManagement = () => {
                           <p className="text-sm text-gray-600 truncate" title={review.content}>{review.content}</p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex flex-col gap-1">
-                            <span className={`inline-flex items-center justify-center px-2.5 py-1 text-xs font-semibold rounded-full w-fit ${getStatusColor(review.status)} `}>
-                              {review.status}
-                            </span>
-                          </div>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(review.status)}`}>
+                            {review.status}
+                          </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                          {new Date(review.createdAt).toLocaleDateString()}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{new Date(review.createdAt).toLocaleDateString()}</div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex items-center gap-2">
                             {review.status !== 'Approved' && (
                               <button
                                 onClick={() => handleStatusChange(review._id, 'Approved')}
                                 disabled={actionLoading}
-                                className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+                                className="bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors disabled:opacity-50 text-xs font-medium"
                               >
                                 Approve
                               </button>
@@ -326,19 +329,18 @@ const ReviewManagement = () => {
                               <button
                                 onClick={() => handleStatusChange(review._id, 'Rejected')}
                                 disabled={actionLoading}
-                                className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+                                className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 text-xs font-medium"
                               >
                                 Reject
                               </button>
                             )}
-                            <div className="w-px h-6 bg-gray-200 mx-1"></div>
                             <button
                               onClick={() => handleDelete(review._id)}
                               disabled={actionLoading}
-                              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                              className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
                               title="Delete"
                             >
-                              <Trash2 className="w-5 h-5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         </td>
@@ -426,6 +428,15 @@ const ReviewManagement = () => {
         )}
       </div>
     </AdminLayout>
+    <ConfirmModal
+      isOpen={confirmModal.isOpen}
+      title="Delete Review"
+      message="Are you sure you want to delete this review? This action cannot be undone."
+      confirmText="Delete"
+      onConfirm={handleConfirmDelete}
+      onCancel={() => setConfirmModal({ isOpen: false, id: null })}
+    />
+    </>
   )
 }
 

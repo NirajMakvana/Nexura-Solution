@@ -17,6 +17,7 @@ import {
     Clock,
     BookOpen
 } from 'lucide-react'
+import ConfirmModal from '../../components/ui/ConfirmModal'
 
 const CATEGORIES = [
     { id: 'web-development', name: 'Web Development' },
@@ -50,6 +51,7 @@ const BlogManagement = () => {
     const [saving, setSaving] = useState(false)
     const [tagInput, setTagInput] = useState('')
     const [showPreview, setShowPreview] = useState(false)
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
 
     useEffect(() => {
         fetchBlogs()
@@ -157,8 +159,9 @@ const BlogManagement = () => {
         }
     }
 
-    const handleDelete = async (blogId) => {
-        if (!window.confirm('Are you sure you want to delete this blog post? This cannot be undone.')) return
+    const handleDelete = async () => {
+        const blogId = confirmModal.id
+        setConfirmModal({ isOpen: false, id: null })
         try {
             await adminService.deleteBlog(blogId)
             toast.success('Blog post deleted successfully!')
@@ -268,75 +271,70 @@ const BlogManagement = () => {
                             <table className="w-full">
                                 <thead className="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Post</th>
-                                        <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
-                                        <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Author</th>
-                                        <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Views</th>
-                                        <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Created</th>
-                                        <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Post</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Author</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Views</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Created</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {filtered.map((blog) => (
-                                        <tr key={blog._id} className="hover:bg-gray-50/50 transition-colors group">
+                                        <tr key={blog._id} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="px-6 py-4 max-w-xs">
-                                                <div>
-                                                    <p className="font-semibold text-gray-900 text-sm truncate">{blog.title}</p>
-                                                    <p className="text-xs text-gray-500 mt-0.5 truncate">{blog.excerpt}</p>
-                                                    {blog.featured && (
-                                                        <span className="mt-1 inline-block px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">Featured</span>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full capitalize">
-                                                    {blog.category?.replace(/-/g, ' ')}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div>
-                                                    <p className="text-sm font-medium text-gray-900">{blog.author}</p>
-                                                    <p className="text-xs text-gray-500">{blog.authorRole}</p>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {blog.status === 'published' ? (
-                                                    <span className="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full flex items-center w-fit">
-                                                        <Globe className="w-3 h-3 mr-1" /> Published
-                                                    </span>
-                                                ) : (
-                                                    <span className="px-2.5 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full flex items-center w-fit">
-                                                        <Edit3 className="w-3 h-3 mr-1" /> Draft
-                                                    </span>
+                                                <div className="text-sm font-medium text-gray-900 truncate">{blog.title}</div>
+                                                <div className="text-sm text-gray-500 truncate">{blog.excerpt}</div>
+                                                {blog.featured && (
+                                                    <span className="mt-1 inline-block px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">Featured</span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">{blog.views || 0}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">
-                                                {new Date(blog.createdAt).toLocaleDateString()}
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900 capitalize">{blog.category?.replace(/-/g, ' ')}</div>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-medium text-gray-900">{blog.author}</div>
+                                                <div className="text-sm text-gray-500">{blog.authorRole}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                    blog.status === 'published'
+                                                        ? 'bg-green-100 text-green-800'
+                                                        : 'bg-yellow-100 text-yellow-800'
+                                                }`}>
+                                                    {blog.status === 'published' ? 'Published' : 'Draft'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900">{blog.views || 0}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900">{new Date(blog.createdAt).toLocaleDateString()}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div className="flex items-center gap-2">
                                                     <button
                                                         onClick={() => handleTogglePublish(blog)}
                                                         title={blog.status === 'published' ? 'Unpublish' : 'Publish'}
-                                                        className={`p-1.5 rounded-lg transition-colors ${blog.status === 'published'
-                                                            ? 'text-green-600 hover:bg-green-50'
-                                                            : 'text-gray-400 hover:bg-gray-100'
-                                                            }`}
+                                                        className={`py-2 px-3 rounded-lg transition-colors ${
+                                                            blog.status === 'published'
+                                                                ? 'bg-green-50 text-green-600 hover:bg-green-100'
+                                                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                                        }`}
                                                     >
                                                         {blog.status === 'published' ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                                                     </button>
                                                     <button
                                                         onClick={() => openEditModal(blog)}
-                                                        className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        className="bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors"
                                                         title="Edit"
                                                     >
                                                         <Edit3 className="w-4 h-4" />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDelete(blog._id)}
-                                                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                        onClick={() => setConfirmModal({ isOpen: true, id: blog._id })}
+                                                        className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors"
                                                         title="Delete"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
@@ -582,6 +580,15 @@ const BlogManagement = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                title="Delete Blog Post"
+                message="Are you sure you want to delete this blog post? This cannot be undone."
+                confirmText="Delete"
+                onConfirm={handleDelete}
+                onCancel={() => setConfirmModal({ isOpen: false, id: null })}
+            />
         </AdminLayout>
     )
 }

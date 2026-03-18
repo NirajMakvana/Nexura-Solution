@@ -17,6 +17,7 @@ import {
   Download,
   X
 } from 'lucide-react'
+import ConfirmModal from '../../components/ui/ConfirmModal'
 
 const ProjectManagement = () => {
   const [projects, setProjects] = useState([])
@@ -45,6 +46,7 @@ const ProjectManagement = () => {
   })
   const [validationErrors, setValidationErrors] = useState({})
   const [techInput, setTechInput] = useState('')
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
 
   const categories = ['Web Development', 'UI/UX Design', 'Graphics Design', 'Cards & Banners', 'Mobile App']
   const statuses = ['Planning', 'In Progress', 'Review', 'Completed', 'On Hold', 'Cancelled']
@@ -89,10 +91,10 @@ const ProjectManagement = () => {
   }
 
   const filteredProjects = projects.filter(project => {
-    const clientName = typeof project.client === 'object' ? project.client.name : project.client
+    const clientName = typeof project.client === 'object' ? (project.client?.name || '') : (project.client || '')
     const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.category.toLowerCase().includes(searchTerm.toLowerCase())
+      (project.category || '').toLowerCase().includes(searchTerm.toLowerCase())
     const matchesFilter = filterStatus === 'all' || project.status.toLowerCase() === filterStatus.toLowerCase()
     return matchesSearch && matchesFilter
   })
@@ -140,11 +142,9 @@ const ProjectManagement = () => {
     }
   }
 
-  const handleDeleteProject = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this project?')) {
-      return
-    }
-
+  const handleDeleteProject = async () => {
+    const id = confirmModal.id
+    setConfirmModal({ isOpen: false, id: null })
     try {
       await adminService.deleteProject(id)
       toast.success('Project deleted successfully')
@@ -339,12 +339,14 @@ const ProjectManagement = () => {
 
   return (
     <AdminLayout>
-      <div>
+      <div className="p-1 md:p-6 space-y-8 animate-fade-in">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Project Management</h1>
-          <p className="text-gray-600 mt-1">Track and manage all your projects</p>
-          <div className="flex justify-end mt-4 space-x-3">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Project Management</h1>
+            <p className="text-gray-600 mt-1">Track and manage all your projects</p>
+          </div>
+          <div className="flex space-x-3">
             <button
               onClick={handleExportProjects}
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
@@ -362,7 +364,7 @@ const ProjectManagement = () => {
           </div>
         </div>
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
@@ -413,7 +415,7 @@ const ProjectManagement = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border mb-8">
+        <div className="bg-white p-6 rounded-xl shadow-sm border">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -451,7 +453,7 @@ const ProjectManagement = () => {
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((project) => (
-            <div key={project._id} className="glass rounded-xl shadow-premium border border-white/20 p-6 hover-lift transition-all">
+            <div key={project._id} className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">{project.name}</h3>
@@ -541,7 +543,7 @@ const ProjectManagement = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDeleteProject(project._id)}
+                  onClick={() => setConfirmModal({ isOpen: true, id: project._id })}
                   className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -778,13 +780,22 @@ const ProjectManagement = () => {
                 onChange={(e) => setEditingProject({ ...editingProject, name: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <input
-                type="text"
-                placeholder="Client Name"
+              <select
                 value={editingProject.client}
                 onChange={(e) => setEditingProject({ ...editingProject, client: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                  backgroundPosition: 'right 0.5rem center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '1.5em 1.5em'
+                }}
+              >
+                <option value="">Select Client</option>
+                {clients.map(client => (
+                  <option key={client._id} value={client._id}>{client.name}</option>
+                ))}
+              </select>
               <select
                 value={editingProject.category}
                 onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
@@ -935,7 +946,7 @@ const ProjectManagement = () => {
                       }}
                       className="mr-2"
                     />
-                    <span className="text-sm">{employee.name}</span>
+                    <span className="text-sm">{employee.firstName} {employee.lastName}</span>
                   </label>
                 ))}
               </div>
@@ -968,7 +979,7 @@ const ProjectManagement = () => {
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900">{selectedProject.name}</h3>
-                <p className="text-gray-600">{selectedProject.client}</p>
+                <p className="text-gray-600">{getClientName(selectedProject.client)}</p>
                 <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full mt-2 ${getStatusColor(selectedProject.status)}`}>
                   {selectedProject.status}
                 </span>
@@ -1085,6 +1096,15 @@ const ProjectManagement = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title="Delete Project"
+        message="Are you sure you want to delete this project? This action cannot be undone."
+        confirmText="Delete"
+        onConfirm={handleDeleteProject}
+        onCancel={() => setConfirmModal({ isOpen: false, id: null })}
+      />
     </AdminLayout>
   )
 }

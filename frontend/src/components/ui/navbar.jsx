@@ -1,23 +1,27 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import Logo from '@/components/ui/logo'
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon'
 
-const Navbar = ({ currentPage = '' }) => {
+const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const location = useLocation()
 
     const navLinks = [
-        { to: '/', label: 'Home', key: 'home' },
-        { to: '/about', label: 'About', key: 'about' },
-        { to: '/services', label: 'Services', key: 'services' },
-        { to: '/portfolio', label: 'Portfolio', key: 'portfolio' },
-        { to: '/blog', label: 'Blog', key: 'blog' },
-        { to: '/careers', label: 'Careers', key: 'careers' },
-        { to: '/contact', label: 'Contact', key: 'contact' }
+        { to: '/', label: 'Home' },
+        { to: '/about', label: 'About' },
+        { to: '/services', label: 'Services' },
+        { to: '/portfolio', label: 'Portfolio' },
+        { to: '/blog', label: 'Blog' },
+        { to: '/careers', label: 'Careers' },
+        { to: '/contact', label: 'Contact' }
     ]
 
-    const isActive = (key) => currentPage === key
+    const isActive = (path) => {
+        if (path === '/') return location.pathname === '/'
+        return location.pathname.startsWith(path)
+    }
 
     return (
         <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
@@ -31,19 +35,16 @@ const Navbar = ({ currentPage = '' }) => {
                     <div className="hidden md:flex items-center space-x-8">
                         {navLinks.map((link) => (
                             <Link
-                                key={link.key}
+                                key={link.to}
                                 to={link.to}
-                                className={`font-medium transition-colors ${isActive(link.key)
-                                        ? 'text-blue-600'
-                                        : 'text-gray-600 hover:text-blue-600'
+                                className={`font-medium transition-colors ${isActive(link.to)
+                                    ? 'text-blue-600'
+                                    : 'text-gray-600 hover:text-blue-600'
                                     }`}
                             >
                                 {link.label}
                             </Link>
                         ))}
-
-                        {/* Completely remove internal access from public view */}
-                        {/* Internal access only via direct URLs: /admin/login and /employee/login */}
 
                         <a
                             href="https://wa.me/919726669466"
@@ -74,20 +75,17 @@ const Navbar = ({ currentPage = '' }) => {
                         <div className="flex flex-col space-y-4">
                             {navLinks.map((link) => (
                                 <Link
-                                    key={link.key}
+                                    key={link.to}
                                     to={link.to}
                                     onClick={() => setIsMenuOpen(false)}
-                                    className={`font-medium transition-colors py-2 ${isActive(link.key)
-                                            ? 'text-blue-600'
-                                            : 'text-gray-600 hover:text-blue-600'
+                                    className={`font-medium transition-colors py-2 ${isActive(link.to)
+                                        ? 'text-blue-600'
+                                        : 'text-gray-600 hover:text-blue-600'
                                         }`}
                                 >
                                     {link.label}
                                 </Link>
                             ))}
-
-                            {/* Completely removed internal access from mobile menu */}
-                            {/* Internal access only via direct URLs: /admin/login and /employee/login */}
 
                             <a
                                 href="https://wa.me/919726669466"

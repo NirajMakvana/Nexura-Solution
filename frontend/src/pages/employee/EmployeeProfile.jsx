@@ -129,7 +129,7 @@ const EmployeeProfile = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     {/* Sidebar Area */}
                     <div className="lg:col-span-1 border-none shadow-none">
-                        <div className="glass rounded-xl shadow-premium border border-white/20 p-6">
+                        <div className="bg-white rounded-xl border border-gray-200 p-6">
                             {/* Profile Summary */}
                             <div className="text-center mb-6">
                                 <div className="relative inline-block mb-4">
@@ -200,8 +200,8 @@ const EmployeeProfile = () => {
                     <div className="lg:col-span-3 space-y-6">
                         {/* Stats Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="glass p-6 rounded-xl shadow-premium border border-white/20 flex items-center space-x-4 hover-lift transition-all">
-                                <div className="p-3 bg-green-100/80 text-green-600 rounded-lg">
+                            <div className="bg-white p-6 rounded-xl border border-gray-200 flex items-center gap-4">
+                                <div className="p-3 bg-green-100 text-green-600 rounded-lg">
                                     <CheckCircle className="w-6 h-6" />
                                 </div>
                                 <div>
@@ -209,8 +209,8 @@ const EmployeeProfile = () => {
                                     <p className="text-2xl font-bold text-gray-900">{statsData?.completedTasks || 0}</p>
                                 </div>
                             </div>
-                            <div className="glass p-6 rounded-xl shadow-premium border border-white/20 flex items-center space-x-4 hover-lift transition-all">
-                                <div className="p-3 bg-blue-100/80 text-blue-600 rounded-lg">
+                            <div className="bg-white p-6 rounded-xl border border-gray-200 flex items-center gap-4">
+                                <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
                                     <AwardIcon className="w-6 h-6" />
                                 </div>
                                 <div>
@@ -218,8 +218,8 @@ const EmployeeProfile = () => {
                                     <p className="text-2xl font-bold text-gray-900">{statsData?.performance || 0}%</p>
                                 </div>
                             </div>
-                            <div className="glass p-6 rounded-xl shadow-premium border border-white/20 flex items-center space-x-4 hover-lift transition-all">
-                                <div className="p-3 bg-emerald-100/80 text-emerald-600 rounded-lg">
+                            <div className="bg-white p-6 rounded-xl border border-gray-200 flex items-center gap-4">
+                                <div className="p-3 bg-emerald-100 text-emerald-600 rounded-lg">
                                     <CalendarDays className="w-6 h-6" />
                                 </div>
                                 <div>
@@ -231,7 +231,7 @@ const EmployeeProfile = () => {
                             </div>
                         </div>
 
-                        <div className="glass rounded-xl shadow-premium border border-white/20 overflow-hidden">
+                        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                             <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
                                 <h2 className="text-xl font-bold text-gray-900">Personal Information</h2>
                                 <button
@@ -292,7 +292,7 @@ const EmployeeProfile = () => {
                         </div>
 
                         {/* Skills Section */}
-                        <div className="glass rounded-xl shadow-premium border border-white/20 overflow-hidden">
+                        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                             <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
                                 <h2 className="text-xl font-bold text-gray-900">Skills & Expertise</h2>
                             </div>

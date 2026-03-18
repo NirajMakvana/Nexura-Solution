@@ -196,7 +196,9 @@ const CodeReviews = () => {
                 <p className="text-sm text-gray-600">Total Reviews</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
-              <GitPullRequest className="w-8 h-8 text-blue-500" />
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <GitPullRequest className="w-6 h-6 text-blue-600" />
+              </div>
             </div>
           </div>
 
@@ -206,7 +208,9 @@ const CodeReviews = () => {
                 <p className="text-sm text-gray-600">Pending</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
               </div>
-              <Clock className="w-8 h-8 text-yellow-500" />
+              <div className="p-3 bg-yellow-100 rounded-lg">
+                <Clock className="w-6 h-6 text-yellow-600" />
+              </div>
             </div>
           </div>
 
@@ -216,7 +220,9 @@ const CodeReviews = () => {
                 <p className="text-sm text-gray-600">Approved</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+              <div className="p-3 bg-green-100 rounded-lg">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
             </div>
           </div>
 
@@ -226,7 +232,9 @@ const CodeReviews = () => {
                 <p className="text-sm text-gray-600">Changes Requested</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.changesRequested}</p>
               </div>
-              <AlertCircle className="w-8 h-8 text-orange-500" />
+              <div className="p-3 bg-orange-100 rounded-lg">
+                <AlertCircle className="w-6 h-6 text-orange-600" />
+              </div>
             </div>
           </div>
         </div>

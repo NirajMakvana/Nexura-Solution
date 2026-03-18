@@ -250,7 +250,7 @@ const EmployeeDashboard = () => {
       {/* Admin-style Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
-          <div key={index} className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
+          <div key={index} className="bg-white p-6 rounded-xl border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">{stat.title}</p>

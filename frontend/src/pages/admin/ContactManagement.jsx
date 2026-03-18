@@ -24,6 +24,7 @@ import AdminLayout from '../../components/admin/AdminLayout'
 import { adminService } from '../../services/adminService'
 import { toast } from 'react-hot-toast'
 import { TableSkeleton } from '../../components/ui/Skeleton'
+import ConfirmModal from '../../components/ui/ConfirmModal'
 
 const ContactManagement = () => {
     const [inquiries, setInquiries] = useState([])
@@ -32,6 +33,7 @@ const ContactManagement = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedInquiry, setSelectedInquiry] = useState(null)
     const [showModal, setShowModal] = useState(false)
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
 
     useEffect(() => {
         loadInquiries()
@@ -63,8 +65,9 @@ const ContactManagement = () => {
         }
     }
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this inquiry?')) return
+    const handleDelete = async () => {
+        const id = confirmModal.id
+        setConfirmModal({ isOpen: false, id: null })
         try {
             await adminService.deleteInquiry(id)
             toast.success('Inquiry deleted')
@@ -107,31 +110,32 @@ const ContactManagement = () => {
             title: 'Total Inquiries',
             value: inquiries.length,
             icon: Inbox,
-            color: 'bg-blue-100 text-blue-600'
+            color: 'blue'
         },
         {
             title: 'New Messages',
             value: inquiries.filter(i => i.status === 'New').length,
             icon: Mail,
-            color: 'bg-yellow-100 text-yellow-600'
+            color: 'yellow'
         },
         {
             title: 'Replied',
             value: inquiries.filter(i => i.status === 'Replied').length,
             icon: CheckCircle,
-            color: 'bg-green-100 text-green-600'
+            color: 'green'
         },
         {
             title: 'Read/Viewed',
             value: inquiries.filter(i => i.status === 'Read').length,
             icon: Eye,
-            color: 'bg-purple-100 text-purple-600'
+            color: 'purple'
         }
     ]
 
     return (
+    <>
         <AdminLayout>
-            <div className="space-y-8">
+            <div className="p-1 md:p-6 space-y-8 animate-fade-in">
                 {/* Header */}
                 <div className="flex justify-between items-center">
                     <div>
@@ -148,22 +152,24 @@ const ContactManagement = () => {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                     {stats.map((stat, index) => (
-                        <div key={index} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center">
-                            <div className={`p-3 rounded-lg ${stat.color} mr-4`}>
-                                <stat.icon className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-medium text-gray-500">{stat.title}</p>
-                                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                        <div key={index} className="bg-white p-6 rounded-xl shadow-sm border">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-600">{stat.title}</p>
+                                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                                </div>
+                                <div className={`p-3 bg-${stat.color}-100 rounded-lg`}>
+                                    <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
+                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
 
                 {/* Filters and Search */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 items-center">
+                <div className="bg-white p-6 rounded-xl shadow-sm border flex flex-col md:flex-row gap-4 items-center">
                     <div className="relative flex-1 w-full">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
@@ -174,21 +180,18 @@ const ContactManagement = () => {
                             className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all"
                         />
                     </div>
-                    <div className="flex items-center space-x-3 w-full md:w-auto">
-                        <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 flex-1 md:flex-none">
-                            <Filter className="w-4 h-4 text-gray-400 mr-2" />
-                            <select
-                                value={filter}
-                                onChange={(e) => setFilter(e.target.value)}
-                                className="bg-transparent text-sm focus:outline-none w-full"
-                            >
+                    <div className="flex items-center w-full md:w-auto">
+                        <select
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
                                 <option value="all">All Status</option>
                                 <option value="New">New</option>
                                 <option value="Read">Read</option>
                                 <option value="Replied">Replied</option>
                                 <option value="Closed">Closed</option>
-                            </select>
-                        </div>
+                        </select>
                     </div>
                 </div>
 
@@ -208,44 +211,44 @@ const ContactManagement = () => {
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead className="bg-gray-50 border-b border-gray-100">
+                            <table className="w-full">
+                                <thead className="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Sender</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Subject</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Date</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Status</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 text-right">Actions</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Sender</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Subject</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {filteredInquiries.map((inquiry) => (
                                         <tr key={inquiry._id} className="hover:bg-gray-50/50 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center space-x-3">
-                                                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold uppercase">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center">
+                                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm flex-shrink-0 uppercase">
                                                         {inquiry.name.charAt(0)}
                                                     </div>
-                                                    <div>
-                                                        <div className="font-semibold text-gray-900">{inquiry.name}</div>
-                                                        <div className="text-xs text-gray-500">{inquiry.email}</div>
+                                                    <div className="ml-4">
+                                                        <div className="text-sm font-medium text-gray-900">{inquiry.name}</div>
+                                                        <div className="text-sm text-gray-500">{inquiry.email}</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="text-sm font-medium text-gray-900 truncate max-w-[200px]">{inquiry.subject}</div>
-                                                <div className="text-xs text-gray-500 truncate max-w-[200px]">{inquiry.message.substring(0, 40)}...</div>
+                                            <td className="px-6 py-4 max-w-xs">
+                                                <div className="text-sm font-medium text-gray-900 truncate">{inquiry.subject}</div>
+                                                <div className="text-sm text-gray-500 truncate">{inquiry.message.substring(0, 50)}...</div>
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">
-                                                {formatDate(inquiry.createdAt)}
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900">{formatDate(inquiry.createdAt)}</div>
                                             </td>
-                                            <td className="px-6 py-4 text-sm">
-                                                <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase ${getStatusColor(inquiry.status)}`}>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(inquiry.status)}`}>
                                                     {inquiry.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="flex justify-end space-x-2">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <div className="flex space-x-2">
                                                     <button
                                                         onClick={() => {
                                                             setSelectedInquiry(inquiry)
@@ -254,17 +257,17 @@ const ContactManagement = () => {
                                                                 handleStatusUpdate(inquiry._id, 'Read')
                                                             }
                                                         }}
-                                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        className="bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors"
                                                         title="View Details"
                                                     >
-                                                        <Eye className="w-5 h-5" />
+                                                        <Eye className="w-4 h-4" />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDelete(inquiry._id)}
-                                                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                        onClick={() => setConfirmModal({ isOpen: true, id: inquiry._id })}
+                                                        className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors"
                                                         title="Delete"
                                                     >
-                                                        <Trash2 className="w-5 h-5" />
+                                                        <Trash2 className="w-4 h-4" />
                                                     </button>
                                                 </div>
                                             </td>
@@ -278,79 +281,96 @@ const ContactManagement = () => {
 
                 {/* Inquiry Modal */}
                 {showModal && selectedInquiry && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
-                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-                            {/* Modal Header */}
-                            <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-                                <div className="flex items-center space-x-3">
-                                    <div className="p-2 bg-blue-100 rounded-lg">
-                                        <MessageSquare className="w-5 h-5 text-blue-600" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-gray-900">Inquiry Details</h3>
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+                            {/* Header */}
+                            <div className="flex justify-between items-start mb-6">
+                                <div>
+                                    <h3 className="text-2xl font-semibold text-gray-900">{selectedInquiry.name}</h3>
+                                    <p className="text-gray-600">{selectedInquiry.email}</p>
+                                    <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full mt-2 ${getStatusColor(selectedInquiry.status)}`}>
+                                        {selectedInquiry.status}
+                                    </span>
                                 </div>
-                                <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                                <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600">
                                     <X className="w-6 h-6" />
                                 </button>
                             </div>
 
-                            {/* Modal Content */}
-                            <div className="p-6 space-y-6">
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-400 uppercase">From</label>
-                                        <p className="font-semibold text-gray-900">{selectedInquiry.name}</p>
-                                        <p className="text-sm text-gray-600">{selectedInquiry.email}</p>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-400 uppercase">Received On</label>
-                                        <p className="font-semibold text-gray-900">{new Date(selectedInquiry.createdAt).toLocaleString()}</p>
-                                        <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${getStatusColor(selectedInquiry.status)}`}>
-                                            {selectedInquiry.status}
-                                        </span>
-                                    </div>
-                                    {selectedInquiry.phone && (
-                                        <div className="col-span-2">
-                                            <label className="text-xs font-bold text-gray-400 uppercase">Phone Number</label>
-                                            <p className="font-semibold text-blue-600 flex items-center">
-                                                <Phone className="w-4 h-4 mr-2" />
-                                                {selectedInquiry.phone}
-                                            </p>
+                            {/* Contact Info */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <h4 className="font-semibold text-gray-900 mb-3">Contact Information</h4>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center">
+                                            <Mail className="w-4 h-4 text-gray-400 mr-2" />
+                                            <span className="text-sm">{selectedInquiry.email}</span>
                                         </div>
-                                    )}
-                                </div>
-
-                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                    <label className="text-xs font-bold text-gray-400 uppercase mb-2 block">Subject</label>
-                                    <p className="font-semibold text-gray-900 mb-3">{selectedInquiry.subject}</p>
-                                    <label className="text-xs font-bold text-gray-400 uppercase mb-2 block border-t pt-3 border-gray-200">Message</label>
-                                    <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                                        {selectedInquiry.message}
-                                    </p>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                    <div className="flex space-x-2">
-                                        {selectedInquiry.status !== 'Replied' && (
-                                            <button
-                                                onClick={() => handleStatusUpdate(selectedInquiry._id, 'Replied')}
-                                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium flex items-center"
-                                            >
-                                                <CheckCircle className="w-4 h-4 mr-2" />
-                                                Mark Replied
-                                            </button>
+                                        {selectedInquiry.phone && (
+                                            <div className="flex items-center">
+                                                <Phone className="w-4 h-4 text-gray-400 mr-2" />
+                                                <span className="text-sm">{selectedInquiry.phone}</span>
+                                            </div>
                                         )}
-                                        <button
-                                            onClick={() => handleDelete(selectedInquiry._id)}
-                                            className="px-4 py-2 border border-red-100 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium flex items-center"
-                                        >
-                                            <Trash2 className="w-4 h-4 mr-2" />
-                                            Delete
-                                        </button>
                                     </div>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-gray-900 mb-3">Inquiry Info</h4>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">Received:</span>
+                                            <span className="font-medium">{new Date(selectedInquiry.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">Status:</span>
+                                            <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusColor(selectedInquiry.status)}`}>
+                                                {selectedInquiry.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Subject & Message */}
+                            <div className="mb-6">
+                                <h4 className="font-semibold text-gray-900 mb-3">Subject</h4>
+                                <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">{selectedInquiry.subject}</p>
+                            </div>
+                            <div className="mb-6">
+                                <h4 className="font-semibold text-gray-900 mb-3">Message</h4>
+                                <p className="text-gray-700 bg-gray-50 p-3 rounded-lg whitespace-pre-wrap leading-relaxed">{selectedInquiry.message}</p>
+                            </div>
+
+                            {/* Footer */}
+                            <div className="flex justify-between items-center">
+                                <div className="flex space-x-2">
+                                    {selectedInquiry.status !== 'Replied' && (
+                                        <button
+                                            onClick={() => handleStatusUpdate(selectedInquiry._id, 'Replied')}
+                                            className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium flex items-center"
+                                        >
+                                            <CheckCircle className="w-4 h-4 mr-2" />
+                                            Mark Replied
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => setConfirmModal({ isOpen: true, id: selectedInquiry._id })}
+                                        className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium flex items-center"
+                                    >
+                                        <Trash2 className="w-4 h-4 mr-2" />
+                                        Delete
+                                    </button>
+                                </div>
+                                <div className="flex space-x-3">
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                                    >
+                                        Close
+                                    </button>
                                     <a
                                         href={`mailto:${selectedInquiry.email}?subject=Re: ${selectedInquiry.subject}`}
-                                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium flex items-center shadow-lg shadow-blue-200"
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
                                         onClick={() => {
                                             if (selectedInquiry.status !== 'Replied') {
                                                 handleStatusUpdate(selectedInquiry._id, 'Replied')
@@ -367,6 +387,15 @@ const ContactManagement = () => {
                 )}
             </div>
         </AdminLayout>
+        <ConfirmModal
+            isOpen={confirmModal.isOpen}
+            title="Delete Inquiry"
+            message="Are you sure you want to delete this inquiry? This action cannot be undone."
+            confirmText="Delete"
+            onConfirm={handleDelete}
+            onCancel={() => setConfirmModal({ isOpen: false, id: null })}
+        />
+        </>
     )
 }
 

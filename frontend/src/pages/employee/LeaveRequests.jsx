@@ -174,97 +174,85 @@ const LeaveRequests = () => {
 
         {/* Leave Balance */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">Casual Leave</h3>
-              <Calendar className="w-5 h-5 text-blue-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-blue-50 rounded-lg flex-shrink-0">
+              <Calendar className="w-5 h-5 text-blue-600" />
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total:</span>
-                <span className="font-semibold">{leaveBalance.casual.total} days</span>
+            <div className="flex-1">
+              <p className="text-xs text-gray-500 font-medium mb-2">Casual Leave</p>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-500">Used</span>
+                <span className="font-semibold text-red-600">{leaveBalance.casual.used} / {leaveBalance.casual.total} days</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Used:</span>
-                <span className="font-semibold text-red-600">{leaveBalance.casual.used} days</span>
+              <div className="w-full bg-gray-100 rounded-full h-1.5">
+                <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: `${(leaveBalance.casual.used / leaveBalance.casual.total) * 100}%` }} />
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Remaining:</span>
-                <span className="font-semibold text-green-600">{leaveBalance.casual.remaining} days</span>
-              </div>
+              <p className="text-xs text-green-600 font-semibold mt-1">{leaveBalance.casual.remaining} days remaining</p>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">Sick Leave</h3>
-              <FileText className="w-5 h-5 text-red-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-red-50 rounded-lg flex-shrink-0">
+              <FileText className="w-5 h-5 text-red-600" />
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total:</span>
-                <span className="font-semibold">{leaveBalance.sick.total} days</span>
+            <div className="flex-1">
+              <p className="text-xs text-gray-500 font-medium mb-2">Sick Leave</p>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-500">Used</span>
+                <span className="font-semibold text-red-600">{leaveBalance.sick.used} / {leaveBalance.sick.total} days</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Used:</span>
-                <span className="font-semibold text-red-600">{leaveBalance.sick.used} days</span>
+              <div className="w-full bg-gray-100 rounded-full h-1.5">
+                <div className="bg-red-500 h-1.5 rounded-full" style={{ width: `${(leaveBalance.sick.used / leaveBalance.sick.total) * 100}%` }} />
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Remaining:</span>
-                <span className="font-semibold text-green-600">{leaveBalance.sick.remaining} days</span>
-              </div>
+              <p className="text-xs text-green-600 font-semibold mt-1">{leaveBalance.sick.remaining} days remaining</p>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">Annual Leave</h3>
-              <Calendar className="w-5 h-5 text-purple-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-purple-50 rounded-lg flex-shrink-0">
+              <Calendar className="w-5 h-5 text-purple-600" />
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total:</span>
-                <span className="font-semibold">{leaveBalance.annual.total} days</span>
+            <div className="flex-1">
+              <p className="text-xs text-gray-500 font-medium mb-2">Annual Leave</p>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-500">Used</span>
+                <span className="font-semibold text-red-600">{leaveBalance.annual.used} / {leaveBalance.annual.total} days</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Used:</span>
-                <span className="font-semibold text-red-600">{leaveBalance.annual.used} days</span>
+              <div className="w-full bg-gray-100 rounded-full h-1.5">
+                <div className="bg-purple-500 h-1.5 rounded-full" style={{ width: `${(leaveBalance.annual.used / leaveBalance.annual.total) * 100}%` }} />
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Remaining:</span>
-                <span className="font-semibold text-green-600">{leaveBalance.annual.remaining} days</span>
-              </div>
+              <p className="text-xs text-green-600 font-semibold mt-1">{leaveBalance.annual.remaining} days remaining</p>
             </div>
           </div>
         </div>
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{totalPending}</p>
-              </div>
-              <Clock className="w-8 h-8 text-yellow-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-yellow-50 rounded-lg flex-shrink-0">
+              <Clock className="w-5 h-5 text-yellow-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Pending</p>
+              <p className="text-xl font-bold text-gray-900">{totalPending}</p>
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Approved</p>
-                <p className="text-2xl font-bold text-gray-900">{totalApproved}</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-green-50 rounded-lg flex-shrink-0">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Approved</p>
+              <p className="text-xl font-bold text-gray-900">{totalApproved}</p>
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Rejected</p>
-                <p className="text-2xl font-bold text-gray-900">{totalRejected}</p>
-              </div>
-              <XCircle className="w-8 h-8 text-red-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-red-50 rounded-lg flex-shrink-0">
+              <XCircle className="w-5 h-5 text-red-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Rejected</p>
+              <p className="text-xl font-bold text-gray-900">{totalRejected}</p>
             </div>
           </div>
         </div>
@@ -297,77 +285,68 @@ const LeaveRequests = () => {
           </div>
         </div>
 
-        {/* Leave Requests List */}
-        <div className="bg-white rounded-lg shadow-sm border">
+        {/* Leave Requests Table */}
+        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
           <div className="p-6 border-b">
             <h2 className="text-xl font-semibold text-gray-900">Leave History</h2>
           </div>
-          <div className="divide-y">
-            {loading ? (
-              <div className="p-8 text-center text-gray-500">
-                Loading leave requests...
-              </div>
-            ) : filteredLeaves.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
-                No leave requests found
-              </div>
-            ) : (
-              filteredLeaves.map((leave) => {
-                const StatusIcon = getStatusIcon(leave.status)
-                const days = calculateDays(leave.startDate, leave.endDate)
-                return (
-                  <div key={leave._id} className="p-6 hover:bg-gray-50">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{leave.type || leave.leaveType}</h3>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getStatusColor(leave.status)}`}>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Leave Type</th>
+                  <th className="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Start Date</th>
+                  <th className="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">End Date</th>
+                  <th className="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Duration</th>
+                  <th className="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Applied</th>
+                  <th className="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {loading ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-10 text-center text-gray-500 text-sm">Loading leave requests...</td>
+                  </tr>
+                ) : filteredLeaves.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-10 text-center text-gray-500 text-sm">No leave requests found</td>
+                  </tr>
+                ) : (
+                  filteredLeaves.map((leave) => {
+                    const StatusIcon = getStatusIcon(leave.status)
+                    const days = calculateDays(leave.startDate, leave.endDate)
+                    return (
+                      <tr key={leave._id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <p className="text-sm font-medium text-gray-900">{leave.type || leave.leaveType}</p>
+                          <p className="text-xs text-gray-500 mt-0.5 max-w-[160px] truncate">{leave.reason}</p>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(leave.startDate).toLocaleDateString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(leave.endDate).toLocaleDateString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{days} day{days > 1 ? 's' : ''}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(leave.createdAt).toLocaleDateString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(leave.status)}`}>
                             <StatusIcon className="w-3 h-3" />
                             {leave.status}
                           </span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-3">{leave.reason}</p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <span className="text-gray-500">Start Date:</span>
-                            <p className="font-medium text-gray-900">{new Date(leave.startDate).toLocaleDateString()}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">End Date:</span>
-                            <p className="font-medium text-gray-900">{new Date(leave.endDate).toLocaleDateString()}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Duration:</span>
-                            <p className="font-medium text-gray-900">{days} day{days > 1 ? 's' : ''}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Applied:</span>
-                            <p className="font-medium text-gray-900">{new Date(leave.createdAt).toLocaleDateString()}</p>
-                          </div>
-                        </div>
-                        {leave.approvedBy && (
-                          <div className="mt-3 text-sm">
-                            <span className="text-gray-500">Reviewed by: </span>
-                            <span className="font-medium text-gray-900">
-                              {leave.approvedBy.firstName} {leave.approvedBy.lastName}
-                            </span>
-                            {leave.approvedDate && (
-                              <span className="text-gray-500"> on {new Date(leave.approvedDate).toLocaleDateString()}</span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => setSelectedLeave(leave)}
-                        className="ml-4 p-2 text-green-600 hover:bg-green-50 rounded-lg"
-                      >
-                        <Eye className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                )
-              })
-            )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button
+                            onClick={() => setSelectedLeave(leave)}
+                            className="bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-1 text-sm"
+                          >
+                            <Eye className="w-4 h-4" />
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 

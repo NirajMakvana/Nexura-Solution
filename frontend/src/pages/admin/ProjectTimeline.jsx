@@ -152,7 +152,7 @@ const ProjectTimeline = () => {
 
   return (
     <AdminLayout>
-      <div>
+      <div className="p-1 md:p-6 space-y-8 animate-fade-in">
         {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center">

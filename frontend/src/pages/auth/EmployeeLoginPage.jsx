@@ -65,7 +65,8 @@ const EmployeeLoginPage = () => {
         firstName: response.firstName,
         lastName: response.lastName,
         email: response.email,
-        role: response.position || response.role,
+        role: response.role,           // system role: 'employee', 'manager', etc.
+        position: response.position,   // job title: 'Frontend Developer', etc.
         department: response.department
       })
 

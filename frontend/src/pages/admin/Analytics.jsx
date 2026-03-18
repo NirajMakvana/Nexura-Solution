@@ -93,10 +93,9 @@ const Analytics = () => {
 
   return (
     <AdminLayout>
-      <div>
+      <div className="p-1 md:p-6 space-y-8 animate-fade-in">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Analytics & Reports</h1>
               <p className="text-gray-600 mt-1">Business insights and performance metrics</p>
@@ -121,10 +120,9 @@ const Analytics = () => {
               </button>
             </div>
           </div>
-        </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
@@ -199,7 +197,7 @@ const Analytics = () => {
         </div>
 
         {/* Revenue Chart */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Monthly Revenue Trend</h2>
             <div className="flex items-center space-x-4">
@@ -253,7 +251,7 @@ const Analytics = () => {
         </div>
 
         {/* Project Categories & Top Clients */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Project Categories */}
           <div className="bg-white rounded-xl shadow-sm border p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Project Categories</h2>

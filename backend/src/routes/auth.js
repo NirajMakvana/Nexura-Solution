@@ -5,6 +5,7 @@ import User from '../models/User.js'
 import { protect } from '../middleware/auth.js'
 import { uploadImage } from '../middleware/upload.js'
 import { emailService } from '../utils/emailService.js'
+import { registerValidator, loginValidator, validate } from '../middleware/validate.js'
 
 const router = express.Router()
 
@@ -21,7 +22,7 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 // @desc    Register new user
 // @access  Public
-router.post('/register', async (req, res, next) => {
+router.post('/register', registerValidator, validate, async (req, res, next) => {
   try {
     const { firstName, lastName, email, password, role } = req.body
 
@@ -64,7 +65,7 @@ router.post('/register', async (req, res, next) => {
 // @route   POST /api/auth/login
 // @desc    Login user
 // @access  Public
-router.post('/login', async (req, res, next) => {
+router.post('/login', loginValidator, validate, async (req, res, next) => {
   try {
     const { email, password } = req.body
 

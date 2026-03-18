@@ -1,6 +1,7 @@
 import express from 'express'
 import Project from '../models/Project.js'
 import { protect } from '../middleware/auth.js'
+import { projectValidator, validate, paginateQuery } from '../middleware/validate.js'
 
 const router = express.Router()
 
@@ -72,14 +73,19 @@ router.get('/my-projects', protect, async (req, res) => {
 // @route   GET /api/projects
 // @desc    Get all projects
 // @access  Private
-router.get('/', protect, async (req, res) => {
+router.get('/', protect, paginateQuery, async (req, res) => {
   try {
-    const projects = await Project.find()
-      .populate('client', 'name email')
-      .populate('team.employee', 'firstName lastName email')
-      .sort({ createdAt: -1 })
-
-    res.json(projects)
+    const { page, limit, skip } = req.pagination
+    const [projects, total] = await Promise.all([
+      Project.find()
+        .populate('client', 'name email')
+        .populate('team.employee', 'firstName lastName email')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Project.countDocuments()
+    ])
+    res.json({ data: projects, total, page, limit, pages: Math.ceil(total / limit) })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
@@ -107,7 +113,7 @@ router.get('/:id', protect, async (req, res) => {
 // @route   POST /api/projects
 // @desc    Create new project and auto-assign tasks to team members
 // @access  Private (Admin only)
-router.post('/', protect, async (req, res) => {
+router.post('/', protect, projectValidator, validate, async (req, res) => {
   try {
     const project = await Project.create(req.body)
 

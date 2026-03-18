@@ -298,13 +298,13 @@ const LeaveManagement = () => {
                                 <table className="w-full">
                                     <thead className="bg-gray-50 border-b border-gray-200">
                                         <tr>
-                                            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Employee</th>
-                                            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Leave Type</th>
-                                            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Duration</th>
-                                            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Days</th>
-                                            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Applied On</th>
-                                            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Employee</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Leave Type</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Duration</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Days</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Applied On</th>
+                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
@@ -313,41 +313,50 @@ const LeaveManagement = () => {
                                             const endDate = new Date(leave.endDate)
                                             const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1
                                             return (
-                                                <tr key={leave._id} className="hover:bg-gray-50/50 transition-colors group">
-                                                    <td className="px-6 py-4">
+                                                <tr key={leave._id} className="hover:bg-gray-50/50 transition-colors">
+                                                    <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="flex items-center">
-                                                            <div className="mr-3">
-                                                                <Avatar
-                                                                    src={leave.employee?.profileImage}
-                                                                    firstName={leave.employee?.firstName}
-                                                                    lastName={leave.employee?.lastName}
-                                                                    size="sm"
-                                                                />
-                                                            </div>
-                                                            <div>
-                                                                <p className="font-medium text-gray-900 text-sm">
+                                                            <Avatar
+                                                                src={leave.employee?.profileImage}
+                                                                firstName={leave.employee?.firstName}
+                                                                lastName={leave.employee?.lastName}
+                                                                size="sm"
+                                                            />
+                                                            <div className="ml-4">
+                                                                <div className="text-sm font-medium text-gray-900">
                                                                     {leave.employee?.firstName} {leave.employee?.lastName}
-                                                                </p>
-                                                                <p className="text-xs text-gray-500">{leave.employee?.employeeId || 'N/A'}</p>
+                                                                </div>
+                                                                <div className="text-sm text-gray-500">{leave.employee?.employeeId || 'N/A'}</div>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-700 font-medium">{leave.leaveType || leave.type || 'N/A'}</td>
-                                                    <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                                        {startDate.toLocaleDateString()} → {endDate.toLocaleDateString()}
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="text-sm font-medium text-gray-900">{leave.leaveType || leave.type || 'N/A'}</div>
                                                     </td>
-                                                    <td className="px-6 py-4">
-                                                        <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-md whitespace-nowrap">{days} day{days > 1 ? 's' : ''}</span>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="text-sm text-gray-900">{startDate.toLocaleDateString()}</div>
+                                                        <div className="text-sm text-gray-500">{endDate.toLocaleDateString()}</div>
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(leave.status)}</td>
-                                                    <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                        {new Date(leave.createdAt).toLocaleDateString()}
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="text-sm font-medium text-gray-900">{days} day{days > 1 ? 's' : ''}</div>
                                                     </td>
-                                                    <td className="px-6 py-4">
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                            leave.status === 'Approved' ? 'bg-green-100 text-green-800' :
+                                                            leave.status === 'Rejected' ? 'bg-red-100 text-red-800' :
+                                                            'bg-yellow-100 text-yellow-800'
+                                                        }`}>
+                                                            {leave.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="text-sm text-gray-900">{new Date(leave.createdAt).toLocaleDateString()}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                         <div className="flex items-center gap-2">
                                                             <button
                                                                 onClick={() => { setSelectedLeave(leave); setShowDetailModal(true) }}
-                                                                className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                                className="bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors"
                                                                 title="View Details"
                                                             >
                                                                 <Eye className="w-4 h-4" />
@@ -357,14 +366,14 @@ const LeaveManagement = () => {
                                                                     <button
                                                                         onClick={() => handleApprove(leave._id)}
                                                                         disabled={processingId === leave._id}
-                                                                        className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+                                                                        className="bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors disabled:opacity-50 text-xs font-medium"
                                                                     >
                                                                         Approve
                                                                     </button>
                                                                     <button
                                                                         onClick={() => openRejectModal(leave)}
                                                                         disabled={processingId === leave._id}
-                                                                        className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+                                                                        className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 text-xs font-medium"
                                                                     >
                                                                         Reject
                                                                     </button>

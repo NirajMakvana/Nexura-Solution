@@ -2,21 +2,28 @@ import express from 'express';
 import { protect, authorize } from '../middleware/auth.js';
 import Payslip from '../models/Payslip.js';
 import User from '../models/User.js';
+import { paginateQuery } from '../middleware/validate.js'
 
 const router = express.Router();
 
 // Get all payslips (Admin/HR)
-router.get('/', protect, authorize('admin', 'hr', 'manager'), async (req, res) => {
+router.get('/', protect, authorize('admin', 'hr', 'manager'), paginateQuery, async (req, res) => {
     try {
         const { year, month } = req.query;
+        const { page, limit, skip } = req.pagination;
         let query = {};
         if (year) query.year = parseInt(year);
         if (month) query.month = month;
 
-        const payslips = await Payslip.find(query)
-            .populate('employee', 'firstName lastName email employeeId')
-            .sort({ year: -1, month: -1 });
-        res.json(payslips);
+        const [payslips, total] = await Promise.all([
+            Payslip.find(query)
+                .populate('employee', 'firstName lastName email employeeId')
+                .sort({ year: -1, month: -1 })
+                .skip(skip)
+                .limit(limit),
+            Payslip.countDocuments(query)
+        ]);
+        res.json({ data: payslips, total, page, limit, pages: Math.ceil(total / limit) });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching payslips', error: error.message });
     }

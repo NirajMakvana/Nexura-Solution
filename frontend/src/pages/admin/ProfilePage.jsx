@@ -67,7 +67,10 @@ const ProfilePage = () => {
   const loadProfile = async () => {
     try {
       setLoading(true)
-      const user = JSON.parse(localStorage.getItem('user') || '{}')
+      // Read from Zustand persist store (nexura-auth) instead of 'user' key
+      const authStorage = localStorage.getItem('nexura-auth')
+      const authState = authStorage ? JSON.parse(authStorage)?.state : null
+      const user = authState?.user || {}
 
       // Fetch full user details
       const userData = await adminService.getEmployee(user._id)
@@ -97,7 +100,10 @@ const ProfilePage = () => {
     setMessage({ type: '', text: '' })
 
     try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}')
+      const authStorage = localStorage.getItem('nexura-auth')
+      const authState = authStorage ? JSON.parse(authStorage)?.state : null
+      const user = authState?.user || {}
+
       await adminService.updateEmployee(user._id, {
         firstName: profileData.firstName,
         lastName: profileData.lastName,
@@ -106,10 +112,6 @@ const ProfilePage = () => {
         address: profileData.address,
         bio: profileData.bio
       })
-
-      // Update localStorage
-      const updatedUser = { ...user, ...profileData }
-      localStorage.setItem('user', JSON.stringify(updatedUser))
 
       // Update Auth Store
       useAuthStore.getState().updateUser(profileData)
@@ -144,10 +146,7 @@ const ProfilePage = () => {
     setIsSaving(true)
 
     try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}')
-      await adminService.updateEmployee(user._id, {
-        password: passwordData.newPassword
-      })
+      await authService.updatePassword(passwordData.currentPassword, passwordData.newPassword)
 
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
       setMessage({ type: 'success', text: 'Password changed successfully!' })

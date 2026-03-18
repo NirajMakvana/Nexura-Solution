@@ -1,5 +1,15 @@
 import api from './api'
 
+// Helper to get user from Zustand persist store
+const getStoredUser = () => {
+  try {
+    const authStorage = localStorage.getItem('nexura-auth')
+    return authStorage ? JSON.parse(authStorage)?.state?.user || {} : {}
+  } catch {
+    return {}
+  }
+}
+
 export const employeeService = {
   // Profile
   async getMyProfile() {
@@ -26,7 +36,7 @@ export const employeeService = {
   },
 
   async clockIn(location = 'Office') {
-    const user = JSON.parse(localStorage.getItem('user'))
+    const user = getStoredUser()
     const response = await api.post('/attendance/clock-in', {
       employee: user._id,
       location
@@ -48,7 +58,7 @@ export const employeeService = {
 
   // Leaves
   async getLeaves() {
-    const user = JSON.parse(localStorage.getItem('user'))
+    const user = getStoredUser()
     const response = await api.get('/leaves', {
       params: { employee: user._id }
     })
@@ -56,7 +66,7 @@ export const employeeService = {
   },
 
   async requestLeave(leaveData) {
-    const user = JSON.parse(localStorage.getItem('user'))
+    const user = getStoredUser()
     const response = await api.post('/leaves', {
       ...leaveData,
       employee: user._id
@@ -66,7 +76,7 @@ export const employeeService = {
 
   // Payslips
   async getPayslips(year) {
-    const user = JSON.parse(localStorage.getItem('user'))
+    const user = getStoredUser()
     const response = await api.get(`/payroll/employee/${user._id}`, {
       params: { year }
     })

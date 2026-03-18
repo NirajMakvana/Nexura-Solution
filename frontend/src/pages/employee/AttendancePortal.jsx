@@ -201,47 +201,47 @@ const AttendancePortal = () => {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="glass p-6 rounded-lg shadow-premium border border-white/20 hover-lift transition-all">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Total Present</p>
-                <p className="text-2xl font-bold text-gray-900">{loading ? '...' : stats.totalPresent}</p>
-                <p className="text-xs text-green-600 mt-1 font-medium">This month</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-green-50 rounded-lg flex-shrink-0">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Total Present</p>
+              <p className="text-xl font-bold text-gray-900">{loading ? '—' : stats.totalPresent}</p>
+              <p className="text-xs text-gray-400 mt-0.5">This month</p>
             </div>
           </div>
 
-          <div className="glass p-6 rounded-lg shadow-premium border border-white/20 hover-lift transition-all">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Total Absent</p>
-                <p className="text-2xl font-bold text-gray-900">{loading ? '...' : stats.totalAbsent}</p>
-                <p className="text-xs text-red-600 mt-1 font-medium">This month</p>
-              </div>
-              <XCircle className="w-8 h-8 text-red-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-red-50 rounded-lg flex-shrink-0">
+              <XCircle className="w-5 h-5 text-red-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Total Absent</p>
+              <p className="text-xl font-bold text-gray-900">{loading ? '—' : stats.totalAbsent}</p>
+              <p className="text-xs text-gray-400 mt-0.5">This month</p>
             </div>
           </div>
 
-          <div className="glass p-6 rounded-lg shadow-premium border border-white/20 hover-lift transition-all">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Total Hours</p>
-                <p className="text-2xl font-bold text-gray-900">{loading ? '...' : stats.totalHours.toFixed(1)}</p>
-                <p className="text-xs text-blue-600 mt-1 font-medium">This month</p>
-              </div>
-              <Clock className="w-8 h-8 text-blue-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-blue-50 rounded-lg flex-shrink-0">
+              <Clock className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Total Hours</p>
+              <p className="text-xl font-bold text-gray-900">{loading ? '—' : stats.totalHours.toFixed(1)}</p>
+              <p className="text-xs text-gray-400 mt-0.5">This month</p>
             </div>
           </div>
 
-          <div className="glass p-6 rounded-lg shadow-premium border border-white/20 hover-lift transition-all">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Avg Hours/Day</p>
-                <p className="text-2xl font-bold text-gray-900">{loading ? '...' : stats.avgHours}</p>
-                <p className="text-xs text-purple-600 mt-1 font-medium">This month</p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-purple-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-purple-50 rounded-lg flex-shrink-0">
+              <TrendingUp className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Avg Hours/Day</p>
+              <p className="text-xl font-bold text-gray-900">{loading ? '—' : stats.avgHours}</p>
+              <p className="text-xs text-gray-400 mt-0.5">This month</p>
             </div>
           </div>
         </div>
@@ -275,17 +275,17 @@ const AttendancePortal = () => {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Clock In</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Clock Out</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hours</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Clock In</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Clock Out</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Hours</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-100">
                 {loading ? (
                   <tr>
                     <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
@@ -300,26 +300,32 @@ const AttendancePortal = () => {
                   </tr>
                 ) : (
                   (attendanceRecords || []).map((record) => (
-                    <tr key={record._id}>
+                    <tr key={record._id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <Calendar className="w-4 h-4 text-gray-400 mr-2" />
                           <span className="text-sm text-gray-900">{formatDate(record.date)}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatTime(record.clockIn)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatTime(record.clockOut)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {record.totalHours ? `${parseFloat(record.totalHours || 0).toFixed(2)}h` : '-'}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{formatTime(record.clockIn)}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full glow-blue ${getStatusColor(record.status)}`}>
+                        <div className="text-sm text-gray-900">{formatTime(record.clockOut)}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {record.totalHours ? `${parseFloat(record.totalHours || 0).toFixed(2)}h` : '-'}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(record.status)}`}>
                           {record.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-sm text-gray-900">
-                          <MapPin className="w-4 h-4 text-gray-400 mr-1" />
+                          <MapPin className="w-4 h-4 text-gray-400 mr-2" />
                           {record.location || 'Office'}
                         </div>
                       </td>

@@ -19,6 +19,10 @@ import {
   X,
   Edit
 } from 'lucide-react'
+import Pagination from '../../components/ui/Pagination'
+import ConfirmModal from '../../components/ui/ConfirmModal'
+
+const ITEMS_PER_PAGE = 10
 
 const InvoiceManagement = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -49,6 +53,8 @@ const InvoiceManagement = () => {
   })
 
   const [editInvoice, setEditInvoice] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
 
   useEffect(() => {
     fetchData()
@@ -102,6 +108,14 @@ const InvoiceManagement = () => {
     const matchesFilter = filterStatus === 'all' || invoice.status.toLowerCase() === filterStatus.toLowerCase()
     return matchesSearch && matchesFilter
   })
+
+  const totalPages = Math.ceil(filteredInvoices.length / ITEMS_PER_PAGE)
+  const paginatedInvoices = filteredInvoices.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  )
+  const handleSearch = (val) => { setSearchTerm(val); setCurrentPage(1) }
+  const handleFilterStatus = (val) => { setFilterStatus(val); setCurrentPage(1) }
 
   const handleAddItem = () => {
     setNewInvoice({
@@ -176,16 +190,16 @@ const InvoiceManagement = () => {
     }
   }
 
-  const handleDeleteInvoice = async (id) => {
-    if (window.confirm('Are you sure you want to delete this invoice?')) {
-      try {
-        await adminService.deleteInvoice(id)
-        toast.success('Invoice deleted successfully')
-        fetchData()
-      } catch (error) {
-        toast.error('Failed to delete invoice')
-        console.error(error)
-      }
+  const handleDeleteInvoice = async () => {
+    const id = confirmModal.id
+    setConfirmModal({ isOpen: false, id: null })
+    try {
+      await adminService.deleteInvoice(id)
+      toast.success('Invoice deleted successfully')
+      fetchData()
+    } catch (error) {
+      toast.error('Failed to delete invoice')
+      console.error(error)
     }
   }
 
@@ -364,7 +378,7 @@ const InvoiceManagement = () => {
                   type="text"
                   placeholder="Search invoices..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -372,7 +386,7 @@ const InvoiceManagement = () => {
             <div className="flex gap-3">
               <select
                 value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+                onChange={(e) => handleFilterStatus(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Status</option>
@@ -417,7 +431,7 @@ const InvoiceManagement = () => {
                     </td>
                   </tr>
                 ) : (
-                  filteredInvoices.map((invoice) => (
+                  paginatedInvoices.map((invoice) => (
                     <tr key={invoice._id} className="hover:bg-gray-50/50 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center">
@@ -481,7 +495,7 @@ const InvoiceManagement = () => {
                             </button>
                           )}
                           <button
-                            onClick={() => handleDeleteInvoice(invoice._id)}
+                            onClick={() => setConfirmModal({ isOpen: true, id: invoice._id })}
                             className="bg-red-50 text-red-600 p-2 rounded-lg hover:bg-red-100"
                             title="Delete"
                           >
@@ -495,6 +509,13 @@ const InvoiceManagement = () => {
               </tbody>
             </table>
           </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={filteredInvoices.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+          />
         </div>
       </div>
 
@@ -844,7 +865,7 @@ const InvoiceManagement = () => {
               </button>
               <button
                 onClick={handleDownloadPDF}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Download PDF
@@ -957,6 +978,15 @@ const InvoiceManagement = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title="Delete Invoice"
+        message="Are you sure you want to delete this invoice? This action cannot be undone."
+        confirmText="Delete"
+        onConfirm={handleDeleteInvoice}
+        onCancel={() => setConfirmModal({ isOpen: false, id: null })}
+      />
     </AdminLayout>
   )
 }

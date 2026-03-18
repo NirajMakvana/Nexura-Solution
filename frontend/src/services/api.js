@@ -9,30 +9,31 @@ const api = axios.create({
   }
 })
 
+// Read token only from Zustand persist storage (single source of truth)
+const getToken = () => {
+  try {
+    const authStorage = localStorage.getItem('nexura-auth')
+    if (authStorage) {
+      const parsed = JSON.parse(authStorage)
+      return parsed.state?.token || null
+    }
+  } catch {
+    // corrupted storage — clear it
+    localStorage.removeItem('nexura-auth')
+  }
+  return null
+}
+
 // Add token to all requests
 api.interceptors.request.use(
   (config) => {
-    // Read from Zustand persist storage
-    const authStorage = localStorage.getItem('nexura-auth')
-    let token = localStorage.getItem('token') // Fallback to direct token
-
-    if (authStorage && !token) {
-      try {
-        const parsed = JSON.parse(authStorage)
-        token = parsed.state?.token
-      } catch (err) {
-        console.error('Could not parse auth store:', err)
-      }
-    }
-
+    const token = getToken()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },
-  (error) => {
-    return Promise.reject(error)
-  }
+  (error) => Promise.reject(error)
 )
 
 let isRedirecting = false
@@ -45,31 +46,34 @@ api.interceptors.response.use(
       if (!isRedirecting) {
         isRedirecting = true
 
-        // Unauthorized - clear token
+        // Clear all auth storage
         localStorage.removeItem('nexura-auth')
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
         localStorage.removeItem('currentEmployee')
         localStorage.removeItem('employeeAuthenticated')
         sessionStorage.removeItem('adminAuthenticated')
 
-        // Redirect based on current path
         const path = window.location.pathname
 
-        // Don't redirect if already on login page
         if (!path.includes('/login')) {
-          if (path.startsWith('/admin')) {
-            window.location.href = '/admin/login?expired=true'
-          } else if (path.startsWith('/employee')) {
-            window.location.href = '/employee/login?expired=true'
+          const redirectUrl = path.startsWith('/admin')
+            ? '/admin/login?expired=true'
+            : path.startsWith('/employee')
+              ? '/employee/login?expired=true'
+              : null
+
+          if (redirectUrl) {
+            // Reset flag after navigation so future 401s are handled
+            setTimeout(() => { isRedirecting = false }, 3000)
+            window.location.href = redirectUrl
           } else {
-            window.location.href = '/'
+            isRedirecting = false
           }
+        } else {
+          isRedirecting = false
         }
       }
 
-      // Return a pending promise to prevent the component's catch block from running 
-      // and showing "Failed to load data" toast errors before the page unloads
+      // Return pending promise to suppress toast errors during redirect
       return new Promise(() => { })
     }
     return Promise.reject(error)

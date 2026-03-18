@@ -22,7 +22,7 @@ import {
   Cpu,
   Layers
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Navbar from '@/components/ui/navbar'
 import Footer from '@/components/ui/footer'
 import ReviewForm from '@/components/ui/ReviewForm'
@@ -34,8 +34,45 @@ import { publicService } from '../../services/publicService'
 import api from '../../services/api'
 import { toast } from 'react-hot-toast'
 
+// Count-up hook for animated stats
+const useCountUp = (target, duration = 1500, start = false) => {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    if (!start || typeof target !== 'number') return
+    let startTime = null
+    const step = (timestamp) => {
+      if (!startTime) startTime = timestamp
+      const progress = Math.min((timestamp - startTime) / duration, 1)
+      setCount(Math.floor(progress * target))
+      if (progress < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }, [target, duration, start])
+  return count
+}
+
+const StatCard = ({ stat, visible, loading }) => {
+  const count = useCountUp(stat.value || 0, 1500, visible && !loading)
+  const display = loading ? '...' : stat.display ? stat.display : `${count}${stat.suffix}`
+  return (
+    <div className="text-center group">
+      <div className="flex justify-center mb-4">
+        <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors group-hover:scale-110 transform duration-300">
+          <stat.icon className="w-6 h-6 text-blue-600" />
+        </div>
+      </div>
+      <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+        {display}
+      </div>
+      <div className="text-gray-600 font-medium">{stat.label}</div>
+    </div>
+  )
+}
+
 const SimpleLandingPage = () => {
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [statsVisible, setStatsVisible] = useState(false)
+  const statsRef = useRef(null)
   const [showAllTestimonials, setShowAllTestimonials] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
   const [stats, setStats] = useState({
@@ -53,6 +90,15 @@ const SimpleLandingPage = () => {
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setStatsVisible(true) },
+      { threshold: 0.3 }
+    )
+    if (statsRef.current) observer.observe(statsRef.current)
+    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
@@ -328,19 +374,16 @@ const SimpleLandingPage = () => {
 
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white" ref={statsRef}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {statsDisplay.map((stat, index) => (
-              <div key={index} className="text-center group">
-                <div className="flex justify-center mb-4">
-                  <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors group-hover:scale-110 transform duration-300">
-                    <stat.icon className="w-6 h-6 text-blue-600" />
-                  </div>
-                </div>
-                <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{stat.number}</div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
-              </div>
+            {[
+              { value: stats.projects, suffix: '+', label: 'Projects Completed', icon: Globe },
+              { value: stats.clients, suffix: '+', label: 'Happy Clients', icon: Users },
+              { value: stats.satisfaction, suffix: '%', label: 'Client Satisfaction', icon: Clock },
+              { value: null, display: '9AM-7PM', label: 'Support Hours', icon: Award }
+            ].map((stat, index) => (
+              <StatCard key={index} stat={stat} visible={statsVisible} loading={loading} />
             ))}
           </div>
         </div>
@@ -483,7 +526,7 @@ const SimpleLandingPage = () => {
                     ))}
                   </ul>
                   <Link
-                    to="/register"
+                    to="/contact"
                     className={`w-full py-3 px-6 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 ${plan.popular
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-lg'
                       : 'bg-gray-100 text-gray-900 hover:bg-gray-200'

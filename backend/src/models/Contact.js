@@ -19,8 +19,11 @@ const contactSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['New', 'In Progress', 'Resolved', 'Archived'],
+        enum: ['New', 'Read', 'In Progress', 'Replied', 'Resolved', 'Closed', 'Archived'],
         default: 'New'
+    },
+    phone: {
+        type: String
     },
     adminNotes: {
         type: String

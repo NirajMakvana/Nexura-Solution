@@ -136,15 +136,15 @@ const AttendanceManagement = () => {
                 {/* Table */}
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden border">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left">
+                        <table className="w-full">
                             <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Employee</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Clock In</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Clock Out</th>
-                                    <th className="text-center px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hours</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Employee</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Clock In</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Clock Out</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Hours</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -165,43 +165,41 @@ const AttendanceManagement = () => {
                                     </tr>
                                 ) : (
                                     filteredAttendance.map((record) => (
-                                        <tr key={record._id} className="hover:bg-gray-50/50 transition-colors group">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
+                                        <tr key={record._id} className="hover:bg-gray-50/50 transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center">
+                                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm flex-shrink-0">
                                                         {record.employee?.firstName?.[0]}{record.employee?.lastName?.[0]}
                                                     </div>
-                                                    <div>
-                                                        <p className="font-bold text-gray-900">{record.employee?.firstName} {record.employee?.lastName}</p>
-                                                        <p className="text-sm text-gray-500 font-medium tracking-tight">ID: {record.employee?.employeeId}</p>
+                                                    <div className="ml-4">
+                                                        <div className="text-sm font-medium text-gray-900">{record.employee?.firstName} {record.employee?.lastName}</div>
+                                                        <div className="text-sm text-gray-500">ID: {record.employee?.employeeId}</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-gray-700 font-medium">
-                                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center text-sm text-gray-900">
+                                                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                                                     {record.clockIn ? new Date(record.clockIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-gray-700 font-medium">
-                                                    <XCircle className="w-4 h-4 text-red-400" />
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center text-sm text-gray-900">
+                                                    <XCircle className="w-4 h-4 mr-2 text-red-400" />
                                                     {record.clockOut ? new Date(record.clockOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-center">
-                                                <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg font-medium text-xs">
-                                                    {record.totalHours ? `${record.totalHours}h` : '-'}
-                                                </span>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-medium text-gray-900">{record.totalHours ? `${record.totalHours}h` : '-'}</div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-1.5 text-gray-500 font-medium">
-                                                    <MapPin className="w-4 h-4 opacity-50" />
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center text-sm text-gray-900">
+                                                    <MapPin className="w-4 h-4 mr-2 text-gray-400" />
                                                     {record.location || 'Office'}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${getStatusColor(record.status)}`}>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(record.status)}`}>
                                                     {record.status}
                                                 </span>
                                             </td>

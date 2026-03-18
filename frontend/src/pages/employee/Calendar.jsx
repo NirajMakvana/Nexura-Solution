@@ -221,49 +221,43 @@ const Calendar = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Events</p>
-                <p className="text-2xl font-bold text-gray-900">{events.length}</p>
-              </div>
-              <CalendarIcon className="w-8 h-8 text-blue-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-blue-50 rounded-lg flex-shrink-0">
+              <CalendarIcon className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Total Events</p>
+              <p className="text-xl font-bold text-gray-900">{events.length}</p>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Meetings</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {events.filter(e => e.type === 'meeting').length}
-                </p>
-              </div>
-              <Users className="w-8 h-8 text-purple-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-purple-50 rounded-lg flex-shrink-0">
+              <Users className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Meetings</p>
+              <p className="text-xl font-bold text-gray-900">{events.filter(e => e.type === 'meeting').length}</p>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Tasks</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {events.filter(e => e.type === 'task').length}
-                </p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-green-50 rounded-lg flex-shrink-0">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Tasks</p>
+              <p className="text-xl font-bold text-gray-900">{events.filter(e => e.type === 'task').length}</p>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Deadlines</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {events.filter(e => e.type === 'deadline').length}
-                </p>
-              </div>
-              <AlertCircle className="w-8 h-8 text-red-500" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+            <div className="p-3 bg-red-50 rounded-lg flex-shrink-0">
+              <AlertCircle className="w-5 h-5 text-red-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Deadlines</p>
+              <p className="text-xl font-bold text-gray-900">{events.filter(e => e.type === 'deadline').length}</p>
             </div>
           </div>
         </div>

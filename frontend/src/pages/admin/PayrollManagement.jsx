@@ -19,6 +19,8 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { adminService } from '../../services/adminService';
 import { toast } from 'react-hot-toast';
 
+import ConfirmModal from '../../components/ui/ConfirmModal'
+
 const PayrollManagement = () => {
     const [payslips, setPayslips] = useState([]);
     const [employees, setEmployees] = useState([]);
@@ -28,6 +30,7 @@ const PayrollManagement = () => {
     const [filterMonth, setFilterMonth] = useState('All');
     const [showModal, setShowModal] = useState(false);
     const [editingPayslip, setEditingPayslip] = useState(null);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
     const [formData, setFormData] = useState({
         employee: '',
         month: 'January',
@@ -101,8 +104,9 @@ const PayrollManagement = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this payslip?')) return;
+    const handleDelete = async () => {
+        const id = confirmModal.id
+        setConfirmModal({ isOpen: false, id: null })
         try {
             await adminService.deletePayslip(id);
             toast.success('Payslip deleted');
@@ -129,6 +133,7 @@ const PayrollManagement = () => {
     };
 
     return (
+        <>
         <AdminLayout>
             <div className="p-1 md:p-6 space-y-8 animate-fade-in">
                 {/* Header */}
@@ -216,27 +221,28 @@ const PayrollManagement = () => {
                 {/* Table */}
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden border">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left">
+                        <table className="w-full">
                             <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Employee</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Period</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Net Salary</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Employee</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Period</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Salary Breakdown</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Net Salary</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {loading ? (
                                     <tr>
-                                        <td colSpan="5" className="px-6 py-20 text-center">
+                                        <td colSpan="6" className="px-6 py-20 text-center">
                                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                                             <p className="mt-4 text-gray-500 font-medium">Loading payroll records...</p>
                                         </td>
                                     </tr>
                                 ) : filteredPayslips.length === 0 ? (
                                     <tr>
-                                        <td colSpan="5" className="px-6 py-20 text-center text-gray-500">
+                                        <td colSpan="6" className="px-6 py-20 text-center text-gray-500">
                                             <FileText className="w-16 h-16 mx-auto mb-4 opacity-20" />
                                             <p className="text-xl font-bold">No records found</p>
                                             <p className="mt-1">Try adjusting your filters or search terms</p>
@@ -244,36 +250,44 @@ const PayrollManagement = () => {
                                     </tr>
                                 ) : (
                                     filteredPayslips.map((payslip) => (
-                                        <tr key={payslip._id} className="hover:bg-gray-50/50 transition-colors group">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
+                                        <tr key={payslip._id} className="hover:bg-gray-50/50 transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center">
+                                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm flex-shrink-0">
                                                         {payslip.employee?.firstName?.[0]}{payslip.employee?.lastName?.[0]}
                                                     </div>
-                                                    <div>
-                                                        <p className="font-bold text-gray-900">{payslip.employee?.firstName} {payslip.employee?.lastName}</p>
-                                                        <p className="text-sm text-gray-500 font-medium tracking-tight">ID: {payslip.employee?.employeeId}</p>
+                                                    <div className="ml-4">
+                                                        <div className="text-sm font-medium text-gray-900">{payslip.employee?.firstName} {payslip.employee?.lastName}</div>
+                                                        <div className="text-sm text-gray-500">ID: {payslip.employee?.employeeId}</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-gray-700 font-medium">
-                                                    <Calendar className="w-4 h-4 text-gray-400" />
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center text-sm text-gray-900">
+                                                    <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                                                     {payslip.month} {payslip.year}
                                                 </div>
+                                                {payslip.paymentDate && (
+                                                    <div className="text-xs text-gray-500 mt-1">Paid: {new Date(payslip.paymentDate).toLocaleDateString()}</div>
+                                                )}
                                             </td>
-                                            <td className="px-6 py-4 font-bold text-gray-900">
-                                                ₹{payslip.netSalary.toLocaleString()}
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900">Basic: ₹{(payslip.basicSalary || 0).toLocaleString()}</div>
+                                                <div className="text-sm text-gray-500">HRA: ₹{(payslip.hra || 0).toLocaleString()} · Ded: ₹{(payslip.deductions || 0).toLocaleString()}</div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${payslip.status === 'Paid' ? 'bg-green-100 text-green-700' :
-                                                    payslip.status === 'Pending' ? 'bg-orange-100 text-orange-700' :
-                                                        'bg-blue-100 text-blue-700'
-                                                    }`}>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-semibold text-gray-900">₹{payslip.netSalary.toLocaleString()}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                    payslip.status === 'Paid' ? 'bg-green-100 text-green-800' :
+                                                    payslip.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-blue-100 text-blue-800'
+                                                }`}>
                                                     {payslip.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div className="flex space-x-2">
                                                     <button
                                                         onClick={() => {
@@ -291,20 +305,20 @@ const PayrollManagement = () => {
                                                             });
                                                             setShowModal(true);
                                                         }}
-                                                        className="bg-purple-50 text-purple-600 p-2 rounded-lg hover:bg-purple-100"
+                                                        className="bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors"
                                                         title="Edit"
                                                     >
                                                         <Edit className="w-4 h-4" />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDelete(payslip._id)}
-                                                        className="bg-red-50 text-red-600 p-2 rounded-lg hover:bg-red-100"
+                                                        onClick={() => setConfirmModal({ isOpen: true, id: payslip._id })}
+                                                        className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors"
                                                         title="Delete"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
-                                                    <button 
-                                                        className="bg-green-50 text-green-600 p-2 rounded-lg hover:bg-green-100"
+                                                    <button
+                                                        className="bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors"
                                                         title="Download"
                                                     >
                                                         <Download className="w-4 h-4" />
@@ -321,40 +335,51 @@ const PayrollManagement = () => {
 
                 {/* Modal */}
                 {showModal && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in">
-                        <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl">
-                            <div className="px-8 py-6 bg-gradient-to-r from-blue-600 to-indigo-600 flex justify-between items-center">
-                                <h2 className="text-2xl font-bold text-white">
-                                    {editingPayslip ? 'Edit Payslip' : 'Generate New Payslip'}
-                                </h2>
-                                <button onClick={() => setShowModal(false)} className="text-white hover:bg-white/20 p-2 rounded-xl transition-all">
-                                    <X className="w-6 h-6" />
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50">
+                        <div className="bg-white rounded-xl w-full max-w-2xl overflow-hidden shadow-xl max-h-[90vh] overflow-y-auto">
+                            {/* Modal Header */}
+                            <div className="flex justify-between items-center p-6 border-b border-gray-200">
+                                <div>
+                                    <h2 className="text-xl font-bold text-gray-900">
+                                        {editingPayslip ? 'Edit Payslip' : 'Generate New Payslip'}
+                                    </h2>
+                                    <p className="text-sm text-gray-500 mt-0.5">
+                                        {editingPayslip ? 'Update payslip details' : 'Create a new payslip for an employee'}
+                                    </p>
+                                </div>
+                                <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <X className="w-5 h-5 text-gray-500" />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700">Select Employee</label>
+                            <form onSubmit={handleSubmit} className="p-6 space-y-5">
+                                {/* Employee & Period */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                            Employee <span className="text-red-500">*</span>
+                                        </label>
                                         <select
                                             required
                                             disabled={!!editingPayslip}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent bg-white disabled:bg-gray-50 disabled:text-gray-500"
                                             value={formData.employee}
                                             onChange={(e) => handleEmployeeChange(e.target.value)}
                                         >
-                                            <option value="">Choose an employee</option>
+                                            <option value="">Select employee</option>
                                             {employees.map(emp => (
                                                 <option key={emp._id} value={emp._id}>{emp.firstName} {emp.lastName} ({emp.employeeId})</option>
                                             ))}
                                         </select>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700">Month & Year</label>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                            Pay Period <span className="text-red-500">*</span>
+                                        </label>
                                         <div className="flex gap-2">
                                             <select
                                                 required
-                                                className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                className="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent bg-white"
                                                 value={formData.month}
                                                 onChange={(e) => setFormData({ ...formData, month: e.target.value })}
                                             >
@@ -362,7 +387,7 @@ const PayrollManagement = () => {
                                             </select>
                                             <select
                                                 required
-                                                className="w-24 px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                className="w-24 px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent bg-white"
                                                 value={formData.year}
                                                 onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
                                             >
@@ -372,63 +397,81 @@ const PayrollManagement = () => {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                                    {[
-                                        { label: 'Basic Salary', key: 'basicSalary' },
-                                        { label: 'HRA', key: 'hra' },
-                                        { label: 'Allowances', key: 'allowances' },
-                                        { label: 'Deductions', key: 'deductions' }
-                                    ].map(field => (
-                                        <div key={field.key} className="space-y-1">
-                                            <label className="text-xs font-bold text-gray-500 uppercase">{field.label}</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="0"
-                                                step="0.01"
-                                                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                                value={formData[field.key] || 0}
-                                                onChange={(e) => setFormData({ ...formData, [field.key]: parseFloat(e.target.value) || 0 })}
-                                            />
-                                        </div>
-                                    ))}
+                                {/* Salary Breakdown */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-3">Salary Breakdown</label>
+                                    <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                        {[
+                                            { label: 'Basic Salary (₹)', key: 'basicSalary', color: 'text-green-600' },
+                                            { label: 'HRA (₹)', key: 'hra', color: 'text-blue-600' },
+                                            { label: 'Allowances (₹)', key: 'allowances', color: 'text-purple-600' },
+                                            { label: 'Deductions (₹)', key: 'deductions', color: 'text-red-600' }
+                                        ].map(field => (
+                                            <div key={field.key}>
+                                                <label className={`block text-xs font-semibold mb-1 ${field.color}`}>{field.label}</label>
+                                                <input
+                                                    type="number"
+                                                    required
+                                                    min="0"
+                                                    step="1"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent bg-white text-sm"
+                                                    value={formData[field.key] || 0}
+                                                    onChange={(e) => setFormData({ ...formData, [field.key]: parseFloat(e.target.value) || 0 })}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {/* Net Salary Preview */}
+                                    <div className="mt-2 flex items-center justify-between px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                        <span className="text-sm font-semibold text-blue-700">Net Salary</span>
+                                        <span className="text-lg font-bold text-blue-700">
+                                            ₹{(
+                                                (formData.basicSalary || 0) +
+                                                (formData.hra || 0) +
+                                                (formData.allowances || 0) -
+                                                (formData.deductions || 0)
+                                            ).toLocaleString()}
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700">Payment Status</label>
+                                {/* Status & Payment Date */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">Payment Status</label>
                                         <select
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent bg-white"
                                             value={formData.status}
                                             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                                         >
                                             <option value="Pending">Pending</option>
-                                            <option value="Paid">Paid</option>
                                             <option value="Processing">Processing</option>
+                                            <option value="Paid">Paid</option>
                                         </select>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700">Payment Date</label>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">Payment Date</label>
                                         <input
                                             type="date"
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent"
                                             value={formData.paymentDate}
                                             onChange={(e) => setFormData({ ...formData, paymentDate: e.target.value })}
                                         />
                                     </div>
                                 </div>
 
-                                <div className="pt-4 flex gap-4">
+                                {/* Footer Buttons */}
+                                <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
                                     <button
                                         type="button"
                                         onClick={() => setShowModal(false)}
-                                        className="flex-1 px-6 py-4 rounded-2xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-all"
+                                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        className="flex-1 px-6 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-lg shadow-blue-200 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                        className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
                                     >
                                         {editingPayslip ? 'Save Changes' : 'Generate Payslip'}
                                     </button>
@@ -439,6 +482,15 @@ const PayrollManagement = () => {
                 )}
             </div>
         </AdminLayout>
+        <ConfirmModal
+            isOpen={confirmModal.isOpen}
+            title="Delete Payslip"
+            message="Are you sure you want to delete this payslip? This action cannot be undone."
+            confirmText="Delete"
+            onConfirm={handleDelete}
+            onCancel={() => setConfirmModal({ isOpen: false, id: null })}
+        />
+        </>
     );
 };
 

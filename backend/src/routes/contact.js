@@ -3,20 +3,16 @@ import Contact from '../models/Contact.js'
 import { protect, authorize } from '../middleware/auth.js'
 import { emailService } from '../utils/emailService.js'
 import { createNotification } from './notifications.js'
+import { contactValidator, validate, paginateQuery } from '../middleware/validate.js'
 
 const router = express.Router()
 
 // @route   POST /api/contact
 // @desc    Submit contact form (public)
 // @access  Public
-router.post('/', async (req, res) => {
+router.post('/', contactValidator, validate, async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body
-
-    // Validation
-    if (!name || !email || !subject || !message) {
-      return res.status(400).json({ message: 'Please provide all required fields' })
-    }
 
     const contact = await Contact.create({
       name,
@@ -111,8 +107,7 @@ router.put('/:id', protect, authorize('admin', 'hr', 'manager'), async (req, res
     }
 
     if (status) contact.status = status
-    if (priority) contact.priority = priority
-    if (notes !== undefined) contact.notes = notes
+    if (notes !== undefined) contact.adminNotes = notes
 
     await contact.save()
 

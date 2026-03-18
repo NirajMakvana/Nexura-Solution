@@ -29,6 +29,11 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { exportToCSV } from '../../utils/csvExport'
+import EmptyState from '../../components/ui/EmptyState'
+import Pagination from '../../components/ui/Pagination'
+import ConfirmModal from '../../components/ui/ConfirmModal'
+
+const ITEMS_PER_PAGE = 10
 
 const StaffManagement = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -60,6 +65,8 @@ const StaffManagement = () => {
   })
 
   const [showPassword, setShowPassword] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
   const departments = ['Design', 'Development', 'Management', 'Marketing', 'Sales']
   const roles = ['UI/UX Designer', 'Full Stack Developer', 'Project Manager', 'Marketing Specialist', 'Sales Executive']
 
@@ -102,6 +109,16 @@ const StaffManagement = () => {
     return matchesSearch && matchesFilter
   })
 
+  const totalPages = Math.ceil(filteredEmployees.length / ITEMS_PER_PAGE)
+  const paginatedEmployees = filteredEmployees.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  )
+
+  // Reset to page 1 when filter/search changes
+  const handleSearch = (val) => { setSearchTerm(val); setCurrentPage(1) }
+  const handleFilter = (val) => { setFilterRole(val); setCurrentPage(1) }
+
   const handleExport = () => {
     const headers = [
       { key: 'employeeId', label: 'Employee ID' },
@@ -126,10 +143,13 @@ const StaffManagement = () => {
   }
 
   const handleAddEmployee = async () => {
-    if (!newEmployee.name || !newEmployee.email || !newEmployee.role) {
-      toast.error('Please fill in all required fields (Name, Email, Role)')
-      return
-    }
+    // Frontend validation
+    if (!newEmployee.name.trim()) return toast.error('Full name is required')
+    if (!newEmployee.email.trim()) return toast.error('Email is required')
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmployee.email)) return toast.error('Enter a valid email address')
+    if (!newEmployee.role) return toast.error('Role/Position is required')
+    if (newEmployee.password && newEmployee.password.length < 6) return toast.error('Password must be at least 6 characters')
+    if (newEmployee.phone && !/^[+\d\s\-()]{7,15}$/.test(newEmployee.phone)) return toast.error('Enter a valid phone number')
 
     try {
       // Split name into firstName and lastName
@@ -155,7 +175,6 @@ const StaffManagement = () => {
         joinDate: newEmployee.joinDate || new Date()
       }
 
-      console.log('Creating employee with data:', employeeData)
       await adminService.createEmployee(employeeData)
 
       toast.success('Employee added successfully')
@@ -190,15 +209,13 @@ const StaffManagement = () => {
     }
   }
 
-  const handleDeleteEmployee = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this employee?')) {
-      return
-    }
-
+  const handleDeleteEmployee = async () => {
+    const id = confirmModal.id
+    setConfirmModal({ isOpen: false, id: null })
     try {
       await adminService.deleteEmployee(id)
       toast.success('Employee deleted successfully')
-      fetchEmployees() // Reload employees
+      fetchEmployees()
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to delete employee')
     }
@@ -278,12 +295,14 @@ const StaffManagement = () => {
 
   return (
     <AdminLayout>
-      <div>
+      <div className="p-1 md:p-6 space-y-8 animate-fade-in">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Staff Management</h1>
-          <p className="text-gray-600 mt-1">Manage your team members and their information</p>
-          <div className="flex justify-end mt-4 space-x-3">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Staff Management</h1>
+            <p className="text-gray-600 mt-1">Manage your team members and their information</p>
+          </div>
+          <div className="flex space-x-3">
             <button
               onClick={handleExport}
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
@@ -301,7 +320,7 @@ const StaffManagement = () => {
           </div>
         </div>
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
@@ -356,7 +375,7 @@ const StaffManagement = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white p-6 rounded-xl shadow-sm mb-8">
+        <div className="bg-white p-6 rounded-xl shadow-sm border mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -365,7 +384,7 @@ const StaffManagement = () => {
                   type="text"
                   placeholder="Search employees..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -373,7 +392,7 @@ const StaffManagement = () => {
             <div className="flex gap-3">
               <select
                 value={filterRole}
-                onChange={(e) => setFilterRole(e.target.value)}
+                onChange={(e) => handleFilter(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Departments</option>
@@ -392,15 +411,25 @@ const StaffManagement = () => {
               <TableSkeleton columns={5} rows={5} />
             </div>
           ) : filteredEmployees.length === 0 ? (
-            <div className="text-center py-12">
-              <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No employees found</p>
+            <div className="p-6">
+              <EmptyState
+                icon={Users}
+                title="No employees found"
+                description={searchTerm ? `No results for "${searchTerm}". Try a different search.` : 'Add your first team member to get started.'}
+                action={
+                  !searchTerm && (
+                    <button onClick={() => setShowAddModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center mx-auto">
+                      <UserPlus className="w-4 h-4 mr-2" /> Add Employee
+                    </button>
+                  )
+                }
+              />
             </div>
           ) : (
             <>
               {/* Mobile Card View */}
               <div className="sm:hidden space-y-4 p-4 bg-gray-50/50">
-                {filteredEmployees.map((employee) => (
+                {paginatedEmployees.map((employee) => (
                   <div key={employee._id} className="bg-white rounded-xl shadow-sm border p-4 space-y-4">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center space-x-3">
@@ -464,7 +493,7 @@ const StaffManagement = () => {
                         <Edit2 className="w-4 h-4 mr-1" /> Edit
                       </button>
                       <button
-                        onClick={() => handleDeleteEmployee(employee._id)}
+                        onClick={() => setConfirmModal({ isOpen: true, id: employee._id })}
                         className="flex-shrink-0 bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center"
                         title="Delete"
                       >
@@ -480,28 +509,16 @@ const StaffManagement = () => {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Employee
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Role & Department
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Contact
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Performance
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Employee</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Role & Department</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Contact</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Performance</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {filteredEmployees.map((employee) => (
+                    {paginatedEmployees.map((employee) => (
                       <tr key={employee._id} className="hover:bg-gray-50/50 transition-colors group">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
@@ -514,9 +531,7 @@ const StaffManagement = () => {
                               />
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                {employee.firstName} {employee.lastName}
-                              </div>
+                              <div className="text-sm font-medium text-gray-900">{employee.firstName} {employee.lastName}</div>
                               <div className="text-sm text-gray-500">ID: {employee.employeeId || employee._id?.slice(-6).toUpperCase()}</div>
                             </div>
                           </div>
@@ -526,19 +541,11 @@ const StaffManagement = () => {
                           <div className="text-sm text-gray-500">{employee.department || 'N/A'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900 flex items-center">
-                            <Mail className="w-4 h-4 mr-1" />
-                            {employee.email}
-                          </div>
-                          <div className="text-sm text-gray-500 flex items-center">
-                            <Phone className="w-4 h-4 mr-1" />
-                            {employee.phone || 'N/A'}
-                          </div>
+                          <div className="text-sm text-gray-900 flex items-center"><Mail className="w-4 h-4 mr-1" />{employee.email}</div>
+                          <div className="text-sm text-gray-500 flex items-center"><Phone className="w-4 h-4 mr-1" />{employee.phone || 'N/A'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className={`text-sm font-medium ${getPerformanceColor(employee.performance || 0)}`}>
-                            {employee.performance || 0}%
-                          </div>
+                          <div className={`text-sm font-medium ${getPerformanceColor(employee.performance || 0)}`}>{employee.performance || 0}%</div>
                           <div className="text-sm text-gray-500">{employee.projects || 0} projects</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -548,27 +555,9 @@ const StaffManagement = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2">
-                            <button
-                              onClick={() => setSelectedEmployee(employee)}
-                              className="bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center"
-                              title="View"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleOpenEditModal(employee)}
-                              className="bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors flex items-center justify-center"
-                              title="Edit"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteEmployee(employee._id)}
-                              className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <button onClick={() => setSelectedEmployee(employee)} className="bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors" title="View"><Eye className="w-4 h-4" /></button>
+                            <button onClick={() => handleOpenEditModal(employee)} className="bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                            <button onClick={() => setConfirmModal({ isOpen: true, id: employee._id })} className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors" title="Delete"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         </td>
                       </tr>
@@ -576,6 +565,13 @@ const StaffManagement = () => {
                   </tbody>
                 </table>
               </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredEmployees.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+              />
             </>
           )}
         </div>
@@ -823,7 +819,7 @@ const StaffManagement = () => {
                   setSelectedEmployee(null)
                   handleOpenEditModal(selectedEmployee)
                 }}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
               >
                 <Edit3 className="w-4 h-4 mr-2" />
                 Edit Employee
@@ -916,7 +912,7 @@ const StaffManagement = () => {
               </button>
               <button
                 onClick={handleUpdateEmployee}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Update Employee
               </button>
@@ -924,6 +920,15 @@ const StaffManagement = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title="Delete Employee"
+        message="Are you sure you want to delete this employee? This action cannot be undone."
+        confirmText="Delete"
+        onConfirm={handleDeleteEmployee}
+        onCancel={() => setConfirmModal({ isOpen: false, id: null })}
+      />
     </AdminLayout>
   )
 }

@@ -25,6 +25,10 @@ import {
 } from 'lucide-react'
 import { CardSkeleton, SkeletonBox, TableSkeleton } from '../../components/ui/Skeleton'
 import { exportToCSV } from '../../utils/csvExport'
+import Pagination from '../../components/ui/Pagination'
+import ConfirmModal from '../../components/ui/ConfirmModal'
+
+const ITEMS_PER_PAGE = 9
 
 const ClientManagement = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -35,6 +39,8 @@ const ClientManagement = () => {
   const [editingClient, setEditingClient] = useState(null)
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
 
   const [newClient, setNewClient] = useState({
     name: '',
@@ -82,13 +88,21 @@ const ClientManagement = () => {
     return matchesSearch && matchesFilter
   })
 
+  const totalPages = Math.ceil(filteredClients.length / ITEMS_PER_PAGE)
+  const paginatedClients = filteredClients.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  )
+  const handleSearch = (val) => { setSearchTerm(val); setCurrentPage(1) }
+  const handleFilterStatus = (val) => { setFilterStatus(val); setCurrentPage(1) }
+
   const handleExport = () => {
     const headers = [
       { key: 'name', label: 'Client Name' },
       { key: 'company', label: 'Company' },
       { key: 'email', label: 'Email' },
       { key: 'phone', label: 'Phone' },
-      { key: 'address', label: 'Address' },
+      { key: 'address', label: 'Address', transform: (v) => formatAddress(v) },
       { key: 'status', label: 'Status' }
     ]
 
@@ -126,11 +140,9 @@ const ClientManagement = () => {
     }
   }
 
-  const handleDeleteClient = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this client?')) {
-      return
-    }
-
+  const handleDeleteClient = async () => {
+    const id = confirmModal.id
+    setConfirmModal({ isOpen: false, id: null })
     try {
       await adminService.deleteClient(id)
       toast.success('Client deleted successfully')
@@ -215,6 +227,13 @@ const ClientManagement = () => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
   }
 
+  const formatAddress = (address) => {
+    if (!address) return ''
+    if (typeof address === 'string') return address
+    return [address.street, address.city, address.state, address.zipCode, address.country]
+      .filter(Boolean).join(', ')
+  }
+
   if (loading) {
     return (
       <AdminLayout>
@@ -265,93 +284,94 @@ const ClientManagement = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm text-gray-600">Total Clients</p>
                 <p className="text-2xl font-bold text-gray-900">{clients.length}</p>
               </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
             </div>
           </div>
 
           <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Star className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm text-gray-600">Active Clients</p>
                 <p className="text-2xl font-bold text-gray-900">{clients.filter(c => c.status === 'Active').length}</p>
               </div>
+              <div className="p-3 bg-green-100 rounded-lg">
+                <Star className="w-6 h-6 text-green-600" />
+              </div>
             </div>
           </div>
 
           <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <DollarSign className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm text-gray-600">Total Revenue</p>
                 <p className="text-2xl font-bold text-gray-900">₹{(clients || []).reduce((sum, c) => sum + (c.totalRevenue || 0), 0).toLocaleString()}</p>
               </div>
+              <div className="p-3 bg-purple-100 rounded-lg">
+                <DollarSign className="w-6 h-6 text-purple-600" />
+              </div>
             </div>
           </div>
 
           <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center">
-              <div className="p-3 bg-yellow-100 rounded-lg">
-                <FolderOpen className="w-6 h-6 text-yellow-600" />
-              </div>
-              <div className="ml-4">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm text-gray-600">Total Projects</p>
                 <p className="text-2xl font-bold text-gray-900">{(clients || []).reduce((sum, c) => sum + (c.totalProjects || 0), 0)}</p>
               </div>
+              <div className="p-3 bg-yellow-100 rounded-lg">
+                <FolderOpen className="w-6 h-6 text-yellow-600" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-
-
-
-      {/* Filters and Search */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border mb-8">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search clients..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+        {/* Filters and Search */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search clients..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <select
+                value={filterStatus}
+                onChange={(e) => handleFilterStatus(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="potential">Potential</option>
+              </select>
             </div>
           </div>
-          <div className="flex gap-3">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="potential">Potential</option>
-            </select>
-          </div>
         </div>
-      </div>
 
-      {/* Clients Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredClients.map((client) => (
+        {/* Clients Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {paginatedClients.length === 0 ? (
+            <div className="col-span-3 py-20 text-center text-gray-500">
+              <Users className="w-16 h-16 mx-auto mb-4 opacity-20" />
+              <p className="text-xl font-bold">No clients found</p>
+            </div>
+          ) : paginatedClients.map((client) => (
           <div key={client.id} className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-lg transition-shadow">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center space-x-3">
@@ -389,7 +409,7 @@ const ClientManagement = () => {
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <MapPin className="w-4 h-4 mr-2" />
-                {client.address}
+                {formatAddress(client.address)}
               </div>
             </div>
 
@@ -435,7 +455,7 @@ const ClientManagement = () => {
 
             <div className="flex space-x-2">
               <button
-                onClick={() => handleViewProject(client)}
+                onClick={() => setSelectedClient(client)}
                 className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center"
               >
                 <Eye className="w-4 h-4 mr-1" />
@@ -449,7 +469,7 @@ const ClientManagement = () => {
                 Edit
               </button>
               <button
-                onClick={() => handleDeleteClient(client._id)}
+                onClick={() => setConfirmModal({ isOpen: true, id: client._id })}
                 className="bg-red-50 text-red-600 py-2 px-3 rounded-lg hover:bg-red-100 transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
@@ -457,8 +477,18 @@ const ClientManagement = () => {
             </div>
           </div>
         ))}
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={filteredClients.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+          />
+        </div>
       </div>
-      {/* </div> */}
 
       {/* Add Client Modal */}
       {showAddModal && (
@@ -598,7 +628,7 @@ const ClientManagement = () => {
               <input
                 type="text"
                 placeholder="Address"
-                value={editingClient.address}
+                value={formatAddress(editingClient.address)}
                 onChange={(e) => setEditingClient({ ...editingClient, address: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -709,7 +739,7 @@ const ClientManagement = () => {
                   </div>
                   <div className="flex items-center text-sm">
                     <MapPin className="w-4 h-4 mr-2 text-gray-400" />
-                    {selectedClient.address}
+                    {formatAddress(selectedClient.address)}
                   </div>
                   {selectedClient.website && (
                     <div className="flex items-center text-sm">
@@ -803,6 +833,15 @@ const ClientManagement = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title="Delete Client"
+        message="Are you sure you want to delete this client? This action cannot be undone."
+        confirmText="Delete"
+        onConfirm={handleDeleteClient}
+        onCancel={() => setConfirmModal({ isOpen: false, id: null })}
+      />
     </AdminLayout>
   )
 }

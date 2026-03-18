@@ -19,18 +19,21 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     )
   }
 
-  const isAdminAuthenticated = sessionStorage.getItem('adminAuthenticated') === 'true'
-  const isEmployeeAuthenticated = localStorage.getItem('employeeAuthenticated') === 'true'
+  // Single source of truth: Zustand auth store only
+  if (!isAuthenticated || !user) {
+    const redirectTo = allowedRoles.includes('admin') ? '/admin/login' : '/employee/login'
+    return <Navigate to={redirectTo} state={{ from: location }} replace />
+  }
 
   if (allowedRoles.includes('admin')) {
-    if (isAdminAuthenticated || (isAuthenticated && (user?.role === 'admin' || user?.role === 'hr'))) {
+    if (user.role === 'admin' || user.role === 'hr') {
       return children
     }
     return <Navigate to="/admin/login" state={{ from: location }} replace />
   }
 
   if (allowedRoles.includes('employee')) {
-    if (isEmployeeAuthenticated || (isAuthenticated && user?.role)) {
+    if (user.role === 'employee' || user.role === 'manager' || user.role === 'admin' || user.role === 'hr') {
       return children
     }
     return <Navigate to="/employee/login" state={{ from: location }} replace />

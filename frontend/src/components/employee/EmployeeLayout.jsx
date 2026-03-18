@@ -28,6 +28,7 @@ const EmployeeLayout = ({ children }) => {
   const [profileDropdown, setProfileDropdown] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [showSearchResults, setShowSearchResults] = useState(false)
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -79,7 +80,7 @@ const EmployeeLayout = ({ children }) => {
   }
 
   // Quick search functionality
-  const searchItems = getRoleBasedSearchItems(currentEmployee.role)
+  const searchItems = getRoleBasedSearchItems(currentEmployee.position || currentEmployee.role)
 
   const filteredSearchResults = searchQuery.length > 0
     ? searchItems.filter(item =>
@@ -195,7 +196,7 @@ const EmployeeLayout = ({ children }) => {
     return baseMenuItems
   }
 
-  const menuItems = getRoleBasedMenuItems(currentEmployee.role)
+  const menuItems = getRoleBasedMenuItems(currentEmployee.position || currentEmployee.role)
 
   // Role-based notifications
   const getRoleBasedNotifications = (role) => {
@@ -222,7 +223,7 @@ const EmployeeLayout = ({ children }) => {
     return baseNotifications
   }
 
-  const notifications = getRoleBasedNotifications(currentEmployee.role)
+  const notifications = getRoleBasedNotifications(currentEmployee.position || currentEmployee.role)
 
   const unreadCount = notifications.filter(n => n.unread).length
 
@@ -246,7 +247,7 @@ const EmployeeLayout = ({ children }) => {
               </div>
             </div>
 
-            {/* Center - Search */}
+            {/* Center - Search (desktop only) */}
             <div className="hidden md:flex flex-1 max-w-md mx-8">
               <form onSubmit={handleSearchSubmit} className="relative w-full">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -262,8 +263,6 @@ const EmployeeLayout = ({ children }) => {
                   onFocus={() => setShowSearchResults(searchQuery.length > 0)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
-
-                {/* Search Results Dropdown */}
                 {showSearchResults && filteredSearchResults.length > 0 && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     {filteredSearchResults.map((item, index) => (
@@ -276,11 +275,9 @@ const EmployeeLayout = ({ children }) => {
                           setShowSearchResults(false)
                         }}
                       >
-                        <div className={`w-2 h-2 rounded-full mr-3 ${item.type === 'page' ? 'bg-green-500' : 'bg-blue-500'
-                          }`}></div>
+                        <div className={`w-2 h-2 rounded-full mr-3 ${item.type === 'page' ? 'bg-green-500' : 'bg-blue-500'}`}></div>
                         <span className="text-sm text-gray-900">{item.name}</span>
-                        <span className={`ml-auto text-xs px-2 py-1 rounded ${item.type === 'page' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                          }`}>
+                        <span className={`ml-auto text-xs px-2 py-1 rounded ${item.type === 'page' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
                           {item.type}
                         </span>
                       </Link>
@@ -292,6 +289,14 @@ const EmployeeLayout = ({ children }) => {
 
             {/* Right side */}
             <div className="flex items-center space-x-4">
+              {/* Mobile Search Toggle */}
+              <button
+                onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+                className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                <Search className="h-5 w-5" />
+              </button>
+
               {/* Notifications */}
               <NotificationCenter />
 
@@ -311,7 +316,7 @@ const EmployeeLayout = ({ children }) => {
                     <p className="text-sm font-medium text-gray-900">
                       {currentEmployee.firstName} {currentEmployee.lastName}
                     </p>
-                    <p className="text-xs text-gray-500">{currentEmployee.role}</p>
+                    <p className="text-xs text-gray-500">{currentEmployee.position || currentEmployee.role}</p>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-400" />
                 </button>
@@ -347,6 +352,49 @@ const EmployeeLayout = ({ children }) => {
               </div>
             </div>
           </div>
+
+          {/* Mobile Search Row */}
+          {mobileSearchOpen && (
+            <div className="md:hidden px-4 pb-3 border-t border-gray-100">
+              <form onSubmit={handleSearchSubmit} className="relative w-full mt-3">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search pages & actions..."
+                  value={searchQuery}
+                  autoFocus
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                    setShowSearchResults(e.target.value.length > 0)
+                  }}
+                  onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                />
+                {showSearchResults && filteredSearchResults.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                    {filteredSearchResults.map((item, index) => (
+                      <Link
+                        key={index}
+                        to={item.href}
+                        className="flex items-center px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                        onClick={() => {
+                          setSearchQuery('')
+                          setShowSearchResults(false)
+                          setMobileSearchOpen(false)
+                        }}
+                      >
+                        <div className={`w-2 h-2 rounded-full mr-3 ${item.type === 'page' ? 'bg-green-500' : 'bg-blue-500'}`}></div>
+                        <span className="text-sm text-gray-900">{item.name}</span>
+                        <span className={`ml-auto text-xs px-2 py-1 rounded ${item.type === 'page' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                          {item.type}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </form>
+            </div>
+          )}
         </div>
       </nav>
 
