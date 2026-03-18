@@ -167,24 +167,13 @@ const AdminDashboard = () => {
       </div>
 
       {/* Enhanced Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
-          <div key={index} className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
+          <div key={index} className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">{stat.title}</p>
                 <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                <div className="flex items-center mt-2">
-                  {stat.trend === 'up' ? (
-                    <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                  ) : (
-                    <Activity className="w-4 h-4 text-blue-500 mr-1" />
-                  )}
-                  <span className={`text-sm ${stat.trend === 'up' ? 'text-green-600' : 'text-blue-600'
-                    }`}>
-                    {stat.change}
-                  </span>
-                </div>
               </div>
               <div className={`p-3 rounded-lg ${stat.title === 'Total Revenue' ? 'bg-green-100' :
                 stat.title === 'Active Projects' ? 'bg-blue-100' :
@@ -238,6 +227,18 @@ const AdminDashboard = () => {
           <Calendar className="h-8 w-8 mb-4" />
           <h3 className="text-lg font-semibold mb-2">Project Timeline</h3>
           <p className="text-orange-100 text-sm">Track milestones and project progress</p>
+        </Link>
+
+        <Link to="/admin/payroll" className="bg-gradient-to-r from-teal-500 to-teal-600 p-6 rounded-xl text-white hover:from-teal-600 hover:to-teal-700 transition-all transform hover:scale-105">
+          <DollarSign className="h-8 w-8 mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Payroll Management</h3>
+          <p className="text-teal-100 text-sm">Manage employee salaries and payslips</p>
+        </Link>
+
+        <Link to="/admin/attendance" className="bg-gradient-to-r from-rose-500 to-rose-600 p-6 rounded-xl text-white hover:from-rose-600 hover:to-rose-700 transition-all transform hover:scale-105">
+          <Clock className="h-8 w-8 mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Attendance Tracking</h3>
+          <p className="text-rose-100 text-sm">Monitor daily employee logs and hours</p>
         </Link>
       </div>
 

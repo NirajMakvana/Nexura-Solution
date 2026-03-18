@@ -247,29 +247,39 @@ const ProjectTimeline = () => {
         </div>
 
         {/* Project Filter */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border mb-8">
+        <div className="bg-white p-6 rounded-xl shadow-sm border mb-8">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <select
               value={selectedProject}
               onChange={(e) => setSelectedProject(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-[200px]"
+              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-[200px]"
             >
               <option value="all">All Projects</option>
               {projects.map(project => (
                 <option key={project._id} value={project._id}>{project.name}</option>
               ))}
             </select>
-            <div className="flex gap-2">
-              {['timeline', 'gantt'].map(mode => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${viewMode === mode ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                >
-                  {mode === 'gantt' ? 'Gantt View' : 'Timeline View'}
-                </button>
-              ))}
+            <div className="flex gap-3 w-full md:w-auto">
+              <button
+                onClick={() => setViewMode('timeline')}
+                className={`flex-1 md:flex-none px-4 py-2 rounded-lg font-medium transition-colors ${
+                  viewMode === 'timeline'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                }`}
+              >
+                Timeline View
+              </button>
+              <button
+                onClick={() => setViewMode('gantt')}
+                className={`flex-1 md:flex-none px-4 py-2 rounded-lg font-medium transition-colors ${
+                  viewMode === 'gantt'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                }`}
+              >
+                Gantt View
+              </button>
             </div>
           </div>
         </div>

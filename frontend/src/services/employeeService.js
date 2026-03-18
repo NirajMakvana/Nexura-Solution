@@ -100,6 +100,12 @@ export const employeeService = {
     return response.data
   },
 
+  // Projects
+  async getMyProjects() {
+    const response = await api.get('/projects/my-projects')
+    return response.data
+  },
+
   // Employee Stats
   async getMyStats() {
     const response = await api.get('/employees/stats')

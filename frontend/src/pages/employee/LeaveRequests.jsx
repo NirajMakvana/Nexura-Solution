@@ -164,7 +164,7 @@ const LeaveRequests = () => {
             </div>
             <button
               onClick={() => setShowRequestModal(true)}
-              className="mt-4 md:mt-0 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="mt-4 md:mt-0 flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
             >
               <Plus className="w-4 h-4" />
               Request Leave
@@ -280,14 +280,14 @@ const LeaveRequests = () => {
                   placeholder="Search leave requests..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
                 />
               </div>
             </div>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
@@ -359,7 +359,7 @@ const LeaveRequests = () => {
                       </div>
                       <button
                         onClick={() => setSelectedLeave(leave)}
-                        className="ml-4 p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                        className="ml-4 p-2 text-green-600 hover:bg-green-50 rounded-lg"
                       >
                         <Eye className="w-5 h-5" />
                       </button>
@@ -420,7 +420,7 @@ const LeaveRequests = () => {
                   </div>
                 </div>
                 {livePreviewDays !== null && livePreviewDays > 0 && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 text-sm text-blue-700 font-medium">
+                  <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-2 text-sm text-green-700 font-medium">
                     📅 Duration: <strong>{livePreviewDays} day{livePreviewDays > 1 ? 's' : ''}</strong>
                   </div>
                 )}
@@ -445,7 +445,7 @@ const LeaveRequests = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                   >
                     Submit Request
                   </button>

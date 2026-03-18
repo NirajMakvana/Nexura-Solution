@@ -27,5 +27,8 @@
     "mongodb"
   ],
   "author": "Your Name",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "check-dependencies": "^2.0.0"
+  }
 }

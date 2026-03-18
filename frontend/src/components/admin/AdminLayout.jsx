@@ -18,7 +18,9 @@ import {
   Star,
   Bell,
   Mail,
-  Briefcase
+  Briefcase,
+  DollarSign,
+  Clock
 } from 'lucide-react'
 import Logo from '../ui/logo'
 import NotificationCenter from './NotificationCenter'
@@ -57,6 +59,9 @@ const AdminLayout = ({ children }) => {
     { name: 'Manage Reviews', href: '/admin/reviews', type: 'action' },
     { name: 'Reviews', href: '/admin/reviews', type: 'page' },
     { name: 'Leave Management', href: '/admin/leaves', type: 'page' },
+    { name: 'Payroll Management', href: '/admin/payroll', type: 'page' },
+    { name: 'Attendance Tracking', href: '/admin/attendance', type: 'page' },
+    { name: 'Manage Payroll', href: '/admin/payroll', type: 'action' },
     { name: 'Manage Leaves', href: '/admin/leaves', type: 'action' },
     { name: 'Blog Management', href: '/admin/blogs', type: 'page' },
     { name: 'Job & Careers', href: '/admin/jobs', type: 'page' },
@@ -105,7 +110,9 @@ const AdminLayout = ({ children }) => {
         'jobs': 'Career & Recruitment',
         'leaves': 'Leave Management',
         'blogs': 'Blog Management',
-        'contacts': 'Contact Inquiries'
+        'contacts': 'Contact Inquiries',
+        'payroll': 'Payroll Management',
+        'attendance': 'Attendance Tracking'
       }
 
       if (pageNames[currentPage]) {
@@ -158,6 +165,18 @@ const AdminLayout = ({ children }) => {
       icon: Users,
       href: '/admin/staff',
       active: location.pathname === '/admin/staff'
+    },
+    {
+      title: 'Payroll',
+      icon: DollarSign,
+      href: '/admin/payroll',
+      active: location.pathname === '/admin/payroll'
+    },
+    {
+      title: 'Attendance',
+      icon: Clock,
+      href: '/admin/attendance',
+      active: location.pathname === '/admin/attendance'
     },
     {
       title: 'Reviews',

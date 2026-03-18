@@ -111,7 +111,7 @@ const TeamOverview = () => {
             </button>
             <button
               onClick={() => setShowAssignTask(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
             >
               <Plus className="w-4 h-4 mr-2" />
               Assign Task
@@ -124,8 +124,8 @@ const TeamOverview = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-100/80 rounded-lg">
-              <Users className="w-6 h-6 text-blue-600" />
+            <div className="p-3 bg-green-100/80 rounded-lg">
+              <Users className="w-6 h-6 text-green-600" />
             </div>
             <div>
               <p className="text-sm text-gray-600 font-medium">Total Members</p>
@@ -194,7 +194,7 @@ const TeamOverview = () => {
                 placeholder="Search team members..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
           </div>
@@ -202,7 +202,7 @@ const TeamOverview = () => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none"
+              className="px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white appearance-none"
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                 backgroundPosition: 'right 0.5rem center',
@@ -238,7 +238,7 @@ const TeamOverview = () => {
                 </div>
                 <div className="ml-3">
                   <h3 className="text-lg font-semibold text-gray-900">{member.firstName} {member.lastName}</h3>
-                  <p className="text-blue-600 text-sm font-semibold mb-3 glow-blue">{member.position || member.role}</p>
+                  <p className="text-green-600 text-sm font-semibold mb-3">{member.position || member.role}</p>
                 </div>
               </div>
               <span className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(member.status)}`}>
@@ -296,7 +296,7 @@ const TeamOverview = () => {
               <h4 className="text-sm font-medium text-gray-900 mb-2">Skills</h4>
               <div className="flex flex-wrap gap-1">
                 {member.skills.slice(0, 3).map((skill, index) => (
-                  <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                  <span key={index} className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
                     {skill}
                   </span>
                 ))}
@@ -312,16 +312,16 @@ const TeamOverview = () => {
             <div className="flex space-x-2">
               <button
                 onClick={() => setSelectedMember(member)}
-                className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center"
+                className="flex-1 bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors flex items-center justify-center"
               >
                 <Eye className="w-4 h-4 mr-1" />
                 View
               </button>
-              <button className="flex-1 bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors flex items-center justify-center">
+              <button className="flex-1 bg-teal-50 text-teal-600 py-2 px-3 rounded-lg hover:bg-teal-100 transition-colors flex items-center justify-center">
                 <MessageSquare className="w-4 h-4 mr-1" />
                 Chat
               </button>
-              <button className="bg-purple-50 text-purple-600 py-2 px-3 rounded-lg hover:bg-purple-100 transition-colors">
+              <button className="bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors">
                 <Plus className="w-4 h-4" />
               </button>
             </div>
@@ -420,7 +420,7 @@ const TeamOverview = () => {
               <h4 className="font-semibold text-gray-900 mb-3">Skills & Expertise</h4>
               <div className="flex flex-wrap gap-2">
                 {selectedMember.skills.map((skill, index) => (
-                  <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                  <span key={index} className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
                     {skill}
                   </span>
                 ))}
@@ -457,11 +457,11 @@ const TeamOverview = () => {
               >
                 Close
               </button>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center">
+              <button className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center">
                 <MessageSquare className="w-4 h-4 mr-2" />
                 Send Message
               </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
+              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center">
                 <Plus className="w-4 h-4 mr-2" />
                 Assign Task
               </button>
@@ -481,13 +481,13 @@ const TeamOverview = () => {
                 <input
                   type="text"
                   placeholder="Enter task title..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Assign To</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
                   <option value="">Select team member...</option>
                   {teamMembers.map(member => (
                     <option key={member.id} value={member.id}>{member.name}</option>
@@ -497,7 +497,7 @@ const TeamOverview = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
                   <option value="High">High</option>
@@ -508,7 +508,7 @@ const TeamOverview = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
                 <input
                   type="date"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
 
@@ -517,7 +517,7 @@ const TeamOverview = () => {
                 <textarea
                   placeholder="Task description..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
             </div>
@@ -531,7 +531,7 @@ const TeamOverview = () => {
               </button>
               <button
                 onClick={() => setShowAssignTask(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
               >
                 Assign Task
               </button>

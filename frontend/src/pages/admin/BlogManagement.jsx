@@ -184,38 +184,38 @@ const BlogManagement = () => {
 
     return (
         <AdminLayout>
-            <div>
+            <div className="p-1 md:p-6 space-y-8 animate-fade-in">
                 {/* Header */}
-                <div className="mb-8 flex justify-between items-start">
+                <div className="flex justify-between items-start">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Blog Management</h1>
                         <p className="text-gray-600 mt-1">Create, edit and publish blog articles for the public website</p>
                     </div>
                     <button
                         onClick={openCreateModal}
-                        className="flex items-center px-4 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-sm"
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                     >
-                        <Plus className="w-5 h-5 mr-2" />
+                        <Plus className="w-5 h-5" />
                         New Post
                     </button>
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                     {[
                         { label: 'Total Posts', value: stats.total, color: 'blue', icon: FileText },
                         { label: 'Published', value: stats.published, color: 'green', icon: Globe },
                         { label: 'Drafts', value: stats.drafts, color: 'yellow', icon: Edit3 },
                         { label: 'Featured', value: stats.featured, color: 'purple', icon: BookOpen },
                     ].map((stat, i) => (
-                        <div key={i} className="bg-white rounded-xl shadow-sm border p-5">
+                        <div key={i} className="bg-white p-6 rounded-xl shadow-sm border">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-500">{stat.label}</p>
-                                    <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                                    <p className="text-sm text-gray-600">{stat.label}</p>
+                                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                                 </div>
-                                <div className={`p-3 rounded-lg bg-${stat.color}-100`}>
-                                    <stat.icon className={`w-5 h-5 text-${stat.color}-600`} />
+                                <div className={`p-3 bg-${stat.color}-100 rounded-lg`}>
+                                    <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
                                 </div>
                             </div>
                         </div>
@@ -223,16 +223,16 @@ const BlogManagement = () => {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white rounded-xl shadow-sm border p-4 mb-6">
+                <div className="bg-white rounded-xl shadow-sm border p-4">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <input
                                 type="text"
-                                placeholder="Search by title or author..."
+                                placeholder="Search by name or ID..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                             />
                         </div>
                         <div className="flex gap-2">
@@ -253,16 +253,15 @@ const BlogManagement = () => {
                 {/* Table */}
                 <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
                     {loading ? (
-                        <div className="flex items-center justify-center h-48">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <div className="px-6 py-20 text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                            <p className="mt-4 text-gray-500 font-medium">Loading blog records...</p>
                         </div>
                     ) : filtered.length === 0 ? (
-                        <div className="text-center py-16">
-                            <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                            <p className="text-gray-500 font-medium mb-2">No blog posts found</p>
-                            <button onClick={openCreateModal} className="text-blue-600 text-sm font-medium hover:underline">
-                                Create your first post
-                            </button>
+                        <div className="px-6 py-20 text-center text-gray-500">
+                            <FileText className="w-16 h-16 mx-auto mb-4 opacity-20" />
+                            <p className="text-xl font-bold">No records found</p>
+                            <p className="mt-1">Try adjusting your filters or search terms</p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
@@ -280,7 +279,7 @@ const BlogManagement = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {filtered.map((blog) => (
-                                        <tr key={blog._id} className="hover:bg-gray-50 transition-colors">
+                                        <tr key={blog._id} className="hover:bg-gray-50/50 transition-colors group">
                                             <td className="px-6 py-4 max-w-xs">
                                                 <div>
                                                     <p className="font-semibold text-gray-900 text-sm truncate">{blog.title}</p>

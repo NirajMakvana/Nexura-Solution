@@ -6,6 +6,8 @@ import User from '../models/User.js'
 import Client from '../models/Client.js'
 import Attendance from '../models/Attendance.js'
 import Employee from '../models/Employee.js'
+import Invoice from '../models/Invoice.js'
+import Project from '../models/Project.js'
 
 const router = express.Router()
 
@@ -122,7 +124,7 @@ router.get('/stats', authorize('admin', 'hr'), async (req, res) => {
 router.get('/analytics', authorize('admin'), async (req, res) => {
     try {
         const [projects, clients] = await Promise.all([
-            Project.find().populate('client', 'name companyName'),
+            Project.find().populate('client', 'name company'),
             Client.countDocuments()
         ]);
 
@@ -158,14 +160,42 @@ router.get('/analytics', authorize('admin'), async (req, res) => {
         const projectStats = Object.entries(
             projects.reduce((acc, p) => {
                 const cat = p.category || 'Other';
-                acc[cat] = (acc[cat] || 0) + 1;
+                if (!acc[cat]) acc[cat] = { count: 0, revenue: 0 };
+                acc[cat].count += 1;
+                if (p.status === 'Completed') {
+                    acc[cat].revenue += p.budget || 0;
+                }
                 return acc;
             }, {})
-        ).map(([category, count]) => ({
+        ).map(([category, stats]) => ({
             category,
-            count,
-            percentage: Math.round((count / projects.length) * 100) || 0
+            count: stats.count,
+            revenue: stats.revenue,
+            percentage: Math.round((stats.count / projects.length) * 100) || 0
         }));
+
+        // Client stats aggregation
+        const clientStatsMap = projects.reduce((acc, p) => {
+            if (!p.client) return acc;
+            const clientId = p.client._id.toString();
+            if (!acc[clientId]) {
+                acc[clientId] = {
+                    name: p.client.name || 'Unknown',
+                    projects: 0,
+                    revenue: 0,
+                    satisfaction: 95
+                };
+            }
+            acc[clientId].projects += 1;
+            if (p.status === 'Completed') {
+                acc[clientId].revenue += p.budget || 0;
+            }
+            return acc;
+        }, {});
+
+        const clientStats = Object.values(clientStatsMap)
+            .sort((a, b) => b.revenue - a.revenue)
+            .slice(0, 5);
 
         res.json({
             totalRevenue,
@@ -175,6 +205,7 @@ router.get('/analytics', authorize('admin'), async (req, res) => {
             totalClients: clients,
             monthlyRevenue,
             projectStats,
+            clientStats,
             avgProjectValue: completedProjects.length > 0 ? Math.round(totalRevenue / completedProjects.length) : 0
         });
     } catch (error) {

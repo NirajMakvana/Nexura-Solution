@@ -85,6 +85,11 @@ export const adminService = {
     return response.data
   },
 
+  async deletePayslip(id) {
+    const response = await api.delete(`/payroll/${id}`)
+    return response.data
+  },
+
   // Project Management
   async getProjects() {
     const response = await api.get('/projects')
@@ -175,12 +180,16 @@ export const adminService = {
 
   // Task Management
   async getTasks() {
-    const response = await api.get('/tasks')
+    const response = await api.get('/tasks', {
+      params: { _t: Date.now() } // Cache busting
+    })
     return response.data
   },
 
   async getTask(id) {
-    const response = await api.get(`/tasks/${id}`)
+    const response = await api.get(`/tasks/${id}`, {
+      params: { _t: Date.now() } // Cache busting
+    })
     return response.data
   },
 

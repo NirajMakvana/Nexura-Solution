@@ -1,10 +1,7 @@
 import { useState } from 'react'
-import { Star, Send, X, Loader2 } from 'lucide-react'
-import api from '../../services/api'
-import { toast } from 'react-hot-toast'
+import { Star, Send, X } from 'lucide-react'
 
 const ReviewForm = ({ isOpen, onClose, onSubmit }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -23,36 +20,18 @@ const ReviewForm = ({ isOpen, onClose, onSubmit }) => {
     'Brand Identity'
   ]
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    setIsSubmitting(true)
-
-    try {
-      await api.post('/reviews', formData)
-
-      toast.success('Thank you for your review! It will be published after approval.')
-
-      if (onSubmit) {
-        // SimpleLandingPage handles its own success state and modal closing
-        onSubmit(formData)
-      }
-
-      setFormData({
-        name: '',
-        company: '',
-        email: '',
-        rating: 5,
-        content: '',
-        service: ''
-      })
-
-      onClose()
-    } catch (error) {
-      console.error('Error submitting review:', error)
-      toast.error(error.response?.data?.message || 'Failed to submit review. Please try again.')
-    } finally {
-      setIsSubmitting(false)
-    }
+    onSubmit(formData)
+    setFormData({
+      name: '',
+      company: '',
+      email: '',
+      rating: 5,
+      content: '',
+      service: ''
+    })
+    onClose()
   }
 
   const handleChange = (e) => {
@@ -191,27 +170,16 @@ const ReviewForm = ({ isOpen, onClose, onSubmit }) => {
               <button
                 type="button"
                 onClick={onClose}
-                disabled={isSubmitting}
                 className="btn-nexura-secondary flex-1"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="btn-nexura flex-1 flex items-center justify-center"
+                className="btn-nexura flex-1"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4 mr-2" />
-                    Submit Review
-                  </>
-                )}
+                <Send className="w-4 h-4 mr-2" />
+                Submit Review
               </button>
             </div>
           </form>

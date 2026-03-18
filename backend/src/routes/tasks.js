@@ -29,13 +29,16 @@ router.get('/my-tasks', async (req, res) => {
 // @access  Private
 router.get('/', async (req, res) => {
   try {
+    console.log('Fetching all tasks for user:', req.user.email)
     const tasks = await Task.find()
       .populate('assignedTo', 'firstName lastName')
       .populate('project', 'name')
       .sort({ createdAt: -1 })
 
+    console.log(`Found ${tasks.length} tasks`)
     res.json(tasks)
   } catch (error) {
+    console.error('Error fetching tasks:', error)
     res.status(500).json({ message: error.message })
   }
 })
@@ -87,18 +90,26 @@ router.post('/', async (req, res) => {
 // @access  Private
 router.put('/:id', async (req, res) => {
   try {
+    console.log('Updating task:', req.params.id, 'with data:', req.body)
+    
     const task = await Task.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
     )
+      .populate('assignedTo', 'firstName lastName email')
+      .populate('project', 'name')
+      .populate('assignedBy', 'firstName lastName')
 
     if (!task) {
+      console.log('Task not found:', req.params.id)
       return res.status(404).json({ message: 'Task not found' })
     }
 
+    console.log('Task updated successfully:', task._id, 'Status:', task.status)
     res.json(task)
   } catch (error) {
+    console.error('Error updating task:', error)
     res.status(500).json({ message: error.message })
   }
 })

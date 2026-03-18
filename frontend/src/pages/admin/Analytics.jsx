@@ -38,7 +38,7 @@ const Analytics = () => {
     try {
       setLoading(true)
       const data = await adminService.getAnalytics(timeRange)
-      setAnalytics(data)
+      setAnalytics(prev => ({ ...prev, ...data }))
     } catch (error) {
       console.error('Failed to load analytics:', error)
       // Don't show toast on initial load failure to avoid spamming
@@ -87,7 +87,7 @@ const Analytics = () => {
 
   // Calculate dynamic metrics based on filtered data
   const filteredData = getFilteredData()
-  const maxRevenue = filteredData.length > 0 ? Math.max(...filteredData.map(m => m.revenue)) : 1
+  const maxRevenue = filteredData.length > 0 ? Math.max(...filteredData.map(m => m.revenue || 0)) || 1 : 1
   const totalRevenue = filteredData.reduce((sum, item) => sum + item.revenue, 0)
   const totalProjects = filteredData.reduce((sum, item) => sum + item.projects, 0)
 
@@ -234,7 +234,7 @@ const Analytics = () => {
                         style={{ height: `${(data.revenue / maxRevenue) * 100}%` }}
                       >
                         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          ₹{data.revenue.toLocaleString()}
+                          ₹{(data.revenue || 0).toLocaleString()}
                         </div>
                       </div>
                       {/* Projects indicator */}
@@ -276,7 +276,7 @@ const Analytics = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-gray-900">₹{category.revenue.toLocaleString()}</p>
+                      <p className="font-medium text-gray-900">₹{(category.revenue || 0).toLocaleString()}</p>
                       <p className="text-sm text-gray-600">{category.percentage}%</p>
                     </div>
                   </div>
@@ -298,7 +298,7 @@ const Analytics = () => {
                   <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                        {client.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                        {(client.name || 'CN').split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{client.name}</p>
@@ -306,7 +306,7 @@ const Analytics = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-gray-900">₹{client.revenue.toLocaleString()}</p>
+                      <p className="font-medium text-gray-900">₹{(client.revenue || 0).toLocaleString()}</p>
                       <div className="flex items-center">
                         <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                         <span className="text-sm text-green-600">{client.satisfaction}%</span>

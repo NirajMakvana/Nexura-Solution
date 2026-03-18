@@ -37,6 +37,8 @@ import LeaveManagement from './pages/admin/LeaveManagement'
 import BlogManagement from './pages/admin/BlogManagement'
 import ContactManagement from './pages/admin/ContactManagement'
 import JobManagement from './pages/admin/JobManagement'
+import PayrollManagement from './pages/admin/PayrollManagement'
+import AttendanceManagement from './pages/admin/AttendanceManagement'
 
 // Employee Pages
 import EmployeeDashboard from './pages/employee/EmployeeDashboard'
@@ -94,6 +96,8 @@ function App() {
           <Route path="/admin/blogs" element={<ProtectedRoute allowedRoles={['admin']}><BlogManagement /></ProtectedRoute>} />
           <Route path="/admin/jobs" element={<ProtectedRoute allowedRoles={['admin']}><JobManagement /></ProtectedRoute>} />
           <Route path="/admin/contacts" element={<ProtectedRoute allowedRoles={['admin']}><ContactManagement /></ProtectedRoute>} />
+          <Route path="/admin/payroll" element={<ProtectedRoute allowedRoles={['admin']}><PayrollManagement /></ProtectedRoute>} />
+          <Route path="/admin/attendance" element={<ProtectedRoute allowedRoles={['admin']}><AttendanceManagement /></ProtectedRoute>} />
           <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={['admin']}><Settings /></ProtectedRoute>} />
           <Route path="/admin/profile" element={<ProtectedRoute allowedRoles={['admin']}><ProfilePage /></ProtectedRoute>} />
 

@@ -1,18 +1,14 @@
 import api from './api'
-import { useAuthStore } from '../store/authStore'
 
 export const authService = {
   async login(email, password) {
     const response = await api.post('/auth/login', { email, password })
     const { token, ...user } = response.data
 
-    // Store in localStorage
+    // We set these for backward compatibility if needed, 
+    // but the store will handle the main persistence now
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(user))
-
-    // Update auth store
-    const { login } = useAuthStore.getState()
-    login(token, user)
 
     return response.data
   },
@@ -33,10 +29,7 @@ export const authService = {
     localStorage.removeItem('currentEmployee')
     localStorage.removeItem('employeeAuthenticated')
     sessionStorage.removeItem('adminAuthenticated')
-
-    // Update auth store
-    const { logout } = useAuthStore.getState()
-    logout()
+    localStorage.removeItem('nexura-auth')
   },
 
   getCurrentUser() {

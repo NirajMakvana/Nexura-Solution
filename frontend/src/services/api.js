@@ -14,9 +14,9 @@ api.interceptors.request.use(
   (config) => {
     // Read from Zustand persist storage
     const authStorage = localStorage.getItem('nexura-auth')
-    let token = null
+    let token = localStorage.getItem('token') // Fallback to direct token
 
-    if (authStorage) {
+    if (authStorage && !token) {
       try {
         const parsed = JSON.parse(authStorage)
         token = parsed.state?.token

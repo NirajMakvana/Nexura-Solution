@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.config() // Move to top to ensure variables are available for all imports
+
 import express from 'express'
 import cors from 'cors'
 import path from 'path'
@@ -5,7 +8,6 @@ import helmet from 'helmet'
 import compression from 'compression'
 import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
-import dotenv from 'dotenv'
 import { connectDB } from './config/database.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
@@ -27,8 +29,6 @@ import blogRoutes from './routes/blogs.js'
 import notificationRoutes from './routes/notifications.js'
 import dashboardRoutes from './routes/dashboard.js'
 import subscriberRoutes from './routes/subscribers.js'
-
-dotenv.config()
 
 if (!process.env.JWT_SECRET) {
   console.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.')

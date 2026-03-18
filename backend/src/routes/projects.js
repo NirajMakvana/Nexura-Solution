@@ -53,6 +53,22 @@ router.get('/count', async (req, res) => {
   }
 })
 
+// @route   GET /api/projects/my-projects
+// @desc    Get current employee's projects
+// @access  Private
+router.get('/my-projects', protect, async (req, res) => {
+  try {
+    const projects = await Project.find({ 'team.employee': req.user._id })
+      .populate('client', 'name email')
+      .populate('team.employee', 'firstName lastName email')
+      .sort({ createdAt: -1 });
+
+    res.json(projects);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // @route   GET /api/projects
 // @desc    Get all projects
 // @access  Private

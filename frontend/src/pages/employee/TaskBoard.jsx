@@ -49,7 +49,7 @@ const TaskBoard = () => {
     }
   }
 
-  const statuses = ['Pending', 'In Progress', 'Review', 'Completed', 'Blocked']
+  const statuses = ['To Do', 'In Progress', 'In Review', 'Completed']
   const priorities = ['Low', 'Medium', 'High', 'Urgent']
 
   const filteredTasks = tasks.filter(task => {
@@ -331,14 +331,14 @@ const TaskBoard = () => {
                 <div className="flex space-x-2 mt-4">
                   <button
                     onClick={() => setSelectedTask(task)}
-                    className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center"
+                    className="flex-1 bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors flex items-center justify-center"
                   >
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </button>
                   <button
                     onClick={() => setEditingTask(task)}
-                    className="flex-1 bg-green-50 text-green-600 py-2 px-3 rounded-lg hover:bg-green-100 transition-colors flex items-center justify-center"
+                    className="flex-1 bg-teal-50 text-teal-600 py-2 px-3 rounded-lg hover:bg-teal-100 transition-colors flex items-center justify-center"
                   >
                     <Edit3 className="w-4 h-4 mr-1" />
                     Edit
@@ -460,7 +460,7 @@ const TaskBoard = () => {
                   setEditingTask(selectedTask)
                   setSelectedTask(null)
                 }}
-                className="bg-green-50 text-green-600 hover:bg-green-100 px-4 py-2 rounded-lg flex items-center"
+                className="bg-teal-50 text-teal-600 hover:bg-teal-100 px-4 py-2 rounded-lg flex items-center"
               >
                 <Edit3 className="w-4 h-4 mr-2" />
                 Edit Task
@@ -529,7 +529,7 @@ const TaskBoard = () => {
               </button>
               <button
                 onClick={handleUpdateTask}
-                className="bg-green-50 text-green-600 hover:bg-green-100 px-4 py-2 rounded-lg flex items-center"
+                className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-lg flex items-center"
               >
                 <Save className="w-4 h-4 mr-2" />
                 Update Task

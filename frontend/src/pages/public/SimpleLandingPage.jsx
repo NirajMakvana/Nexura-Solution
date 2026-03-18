@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import Navbar from '@/components/ui/navbar'
+import Footer from '@/components/ui/footer'
 import ReviewForm from '@/components/ui/ReviewForm'
 import ReviewsSection from '@/components/ui/ReviewsSection'
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon'
@@ -274,31 +275,33 @@ const SimpleLandingPage = () => {
                 <div className="absolute top-1/2 left-1/2 -translate-x-3/4 -translate-y-3/4 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
 
                 {/* Central Platform Element */}
-                <div className="relative z-10 w-64 h-64 bg-white/40 backdrop-blur-3xl rounded-[2.5rem] shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] border border-white/50 flex flex-col items-center justify-center transform rotate-12 hover:rotate-0 transition-transform duration-700 ease-out group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-[2.5rem]"></div>
-                  <Layers className="w-20 h-20 text-blue-600 mb-4 group-hover:scale-110 transition-transform duration-500" />
-                  <div className="font-bold text-gray-800 text-lg">Core Engine</div>
-                  <div className="text-xs text-blue-600 font-semibold bg-blue-50 px-2 py-1 rounded-full mt-2">v2.0 Active</div>
+                <div className="relative z-10 w-72 h-72 bg-white/70 backdrop-blur-2xl rounded-[3rem] shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)] border border-white flex flex-col items-center justify-center transform hover:scale-110 transition-all duration-700 ease-out group overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-colors"></div>
+                  <div className="p-6 bg-blue-600 rounded-[2rem] shadow-xl shadow-blue-500/30 mb-5 transform group-hover:rotate-12 transition-transform duration-500">
+                    <Layers className="w-12 h-12 text-white" />
+                  </div>
+                  <div className="font-bold text-gray-900 text-xl tracking-tight">Core Engine</div>
+                  <div className="text-xs text-blue-600 font-bold bg-blue-50 px-3 py-1 rounded-full mt-3 border border-blue-100 uppercase tracking-wider">v2.0 Active</div>
                 </div>
 
-                {/* Floating Tech Nodes */}
-                <div className="absolute top-[10%] left-[20%] p-5 bg-white backdrop-blur-xl rounded-2xl shadow-xl border border-gray-100 animate-bounce cursor-pointer hover:scale-110 transition-transform" style={{ animationDuration: '3s' }}>
+                {/* Floating Tech Nodes - Matching Screenshot */}
+                <div className="absolute top-[5%] left-[15%] p-6 bg-white/90 backdrop-blur-xl rounded-[1.5rem] shadow-2xl border border-white hover:scale-110 transition-transform duration-500 animate-float z-20">
                   <Code className="w-10 h-10 text-blue-600" />
                 </div>
 
-                <div className="absolute top-[20%] right-[10%] p-5 bg-white backdrop-blur-xl rounded-2xl shadow-xl border border-gray-100 animate-bounce cursor-pointer hover:scale-110 transition-transform" style={{ animationDuration: '4s', animationDelay: '1s' }}>
+                <div className="absolute top-[15%] right-[5%] p-6 bg-white/90 backdrop-blur-xl rounded-[1.5rem] shadow-2xl border border-white hover:scale-110 transition-transform duration-500 animate-float z-20" style={{ animationDelay: '1s' }}>
                   <Cloud className="w-10 h-10 text-sky-500" />
                 </div>
 
-                <div className="absolute bottom-[20%] left-[10%] p-5 bg-white backdrop-blur-xl rounded-2xl shadow-xl border border-gray-100 animate-bounce cursor-pointer hover:scale-110 transition-transform z-20" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }}>
+                <div className="absolute bottom-[25%] left-[5%] p-6 bg-white/90 backdrop-blur-xl rounded-[1.5rem] shadow-2xl border border-white hover:scale-110 transition-transform duration-500 animate-float z-20" style={{ animationDelay: '2s' }}>
                   <Smartphone className="w-10 h-10 text-indigo-600" />
                 </div>
 
-                <div className="absolute bottom-[10%] right-[20%] p-5 bg-white backdrop-blur-xl rounded-2xl shadow-xl border border-gray-100 animate-bounce cursor-pointer hover:scale-110 transition-transform" style={{ animationDuration: '4.5s', animationDelay: '1.5s' }}>
+                <div className="absolute bottom-[5%] right-[15%] p-6 bg-white/90 backdrop-blur-xl rounded-[1.5rem] shadow-2xl border border-white hover:scale-110 transition-transform duration-500 animate-float z-20" style={{ animationDelay: '1.5s' }}>
                   <Database className="w-10 h-10 text-purple-600" />
                 </div>
 
-                <div className="absolute top-[50%] right-[0%] p-4 bg-white/90 backdrop-blur-xl rounded-xl shadow-lg border border-gray-100 animate-bounce cursor-pointer hover:scale-110 transition-transform" style={{ animationDuration: '3.2s', animationDelay: '2s' }}>
+                <div className="absolute top-[45%] right-[-5%] p-5 bg-white/90 backdrop-blur-xl rounded-[1.2rem] shadow-2xl border border-white hover:scale-110 transition-transform duration-500 animate-float z-20" style={{ animationDelay: '2.5s' }}>
                   <Cpu className="w-8 h-8 text-green-500" />
                 </div>
 
@@ -532,67 +535,7 @@ const SimpleLandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div className="col-span-1 md:col-span-2">
-              <Logo size="md" className="mb-4" />
-              <p className="text-gray-400 mb-6 max-w-md">
-                Nexura Solutions is an emerging remote-first IT company specializing in UI/UX design,
-                full stack development, graphics design, and complete digital solutions.
-              </p>
-              <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  <span className="sr-only">Facebook</span>
-                  <div className="w-6 h-6 bg-gray-600 rounded"></div>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  <span className="sr-only">Twitter</span>
-                  <div className="w-6 h-6 bg-gray-600 rounded"></div>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  <span className="sr-only">LinkedIn</span>
-                  <div className="w-6 h-6 bg-gray-600 rounded"></div>
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link to="/features" className="hover:text-white transition-colors">Features</Link></li>
-                <li><Link to="#pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><Link to="/careers" className="hover:text-white transition-colors">Careers</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              &copy; 2025 Nexura Solutions. All rights reserved.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to="/privacy-policy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link>
-              <Link to="/terms-of-service" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</Link>
-              {/* Discrete admin access - only visible on hover */}
-              <Link to="/admin/login" className="text-gray-800 hover:text-gray-400 text-xs transition-colors opacity-20 hover:opacity-100">
-                Staff
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Scroll to Top Button */}
       {showScrollTop && (

@@ -17,6 +17,8 @@ import {
 } from 'lucide-react'
 import Logo from '@/components/ui/logo'
 import Navbar from '@/components/ui/navbar'
+import Footer from '@/components/ui/footer'
+import SEO from '@/components/ui/SEO'
 import { publicService } from '@/services/publicService'
 import { toast } from 'react-hot-toast'
 
@@ -466,49 +468,7 @@ const JobApplicationPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div className="col-span-1 md:col-span-2">
-              <Logo size="md" className="mb-4" />
-              <p className="text-gray-400 mb-6 max-w-md">
-                Nexura Solutions provides comprehensive IT services to help businesses
-                achieve digital transformation and sustainable growth.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">Services</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link to="/services" className="hover:text-white transition-colors">UI/UX Design</Link></li>
-                <li><Link to="/services" className="hover:text-white transition-colors">Full Stack Development</Link></li>
-                <li><Link to="/services" className="hover:text-white transition-colors">Graphics Design</Link></li>
-                <li><Link to="/services" className="hover:text-white transition-colors">Cards & Banners</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
-                <li><Link to="/portfolio" className="hover:text-white transition-colors">Portfolio</Link></li>
-                <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-                <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              &copy; 2025 Nexura Solutions. All rights reserved.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to="/privacy-policy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link>
-              <Link to="/terms-of-service" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

@@ -239,30 +239,28 @@ const ClientManagement = () => {
 
   return (
     <AdminLayout>
-      <div>
+      <div className="p-1 md:p-6 space-y-8 animate-fade-in">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Client Management</h1>
-              <p className="text-gray-600 mt-1">Manage your clients and their project history</p>
-            </div>
-            <div className="flex space-x-3">
-              <button
-                onClick={handleExport}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </button>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Client
-              </button>
-            </div>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Client Management</h1>
+            <p className="text-gray-600 mt-1">Manage your clients and their project history</p>
+          </div>
+          <div className="flex space-x-3">
+            <button
+              onClick={handleExport}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </button>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              Add Client
+            </button>
           </div>
         </div>
 

@@ -286,7 +286,7 @@ const StaffManagement = () => {
           <div className="flex justify-end mt-4 space-x-3">
             <button
               onClick={handleExport}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center"
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
             >
               <Download className="w-4 h-4 mr-2" />
               Export CSV
@@ -302,54 +302,54 @@ const StaffManagement = () => {
         </div>
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-          <div className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
-            <div className="flex items-center">
-              <div className="p-3 bg-blue-100/80 rounded-lg">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600 font-medium">Total Employees</p>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Employees</p>
                 <p className="text-2xl font-bold text-gray-900">{employees.length}</p>
               </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
             </div>
           </div>
 
-          <div className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
-            <div className="flex items-center">
-              <div className="p-3 bg-green-100/80 rounded-lg">
-                <User className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600 font-medium">Active</p>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Active</p>
                 <p className="text-2xl font-bold text-gray-900">{employees.filter(e => e.isActive).length}</p>
               </div>
+              <div className="p-3 bg-green-100 rounded-lg">
+                <User className="w-6 h-6 text-green-600" />
+              </div>
             </div>
           </div>
 
-          <div className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
-            <div className="flex items-center">
-              <div className="p-3 bg-purple-100/80 rounded-lg">
-                <Briefcase className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600 font-medium">Departments</p>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Departments</p>
                 <p className="text-2xl font-bold text-gray-900">{departments.length}</p>
               </div>
+              <div className="p-3 bg-purple-100 rounded-lg">
+                <Briefcase className="w-6 h-6 text-purple-600" />
+              </div>
             </div>
           </div>
 
-          <div className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
-            <div className="flex items-center">
-              <div className="p-3 bg-yellow-100/80 rounded-lg">
-                <Star className="w-6 h-6 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600 font-medium">Avg Performance</p>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Avg Performance</p>
                 <p className="text-2xl font-bold text-gray-900">
                   {employees.length > 0
                     ? Math.round(employees.reduce((acc, emp) => acc + (emp.performance || 0), 0) / employees.length)
                     : 0}%
                 </p>
+              </div>
+              <div className="p-3 bg-yellow-100 rounded-lg">
+                <Star className="w-6 h-6 text-yellow-600" />
               </div>
             </div>
           </div>
@@ -381,10 +381,6 @@ const StaffManagement = () => {
                   <option key={dept} value={dept}>{dept}</option>
                 ))}
               </select>
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </button>
             </div>
           </div>
         </div>
@@ -482,31 +478,31 @@ const StaffManagement = () => {
               {/* Desktop Table View */}
               <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Employee
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Role & Department
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Contact
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Performance
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-100">
                     {filteredEmployees.map((employee) => (
-                      <tr key={employee._id} className="hover:bg-gray-50">
+                      <tr key={employee._id} className="hover:bg-gray-50/50 transition-colors group">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="mr-4">

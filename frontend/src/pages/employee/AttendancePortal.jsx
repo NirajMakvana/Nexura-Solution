@@ -144,7 +144,7 @@ const AttendancePortal = () => {
         </div>
 
         {/* Clock In/Out Card */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 mb-6 text-white">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl shadow-lg p-8 mb-6 text-white">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-6 md:mb-0">
               <div className="flex items-center gap-3 mb-4">
@@ -187,13 +187,13 @@ const AttendancePortal = () => {
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={handleClockIn}
-                  className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold  transition-colors flex items-center gap-2 mx-auto"
-                >
-                  <Play className="w-5 h-5" />
-                  Clock In
-                </button>
+                  <button
+                    onClick={handleClockIn}
+                    className="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold  transition-colors flex items-center gap-2 mx-auto"
+                  >
+                    <Play className="w-5 h-5" />
+                    Clock In
+                  </button>
               )}
             </div>
           </div>
@@ -253,7 +253,7 @@ const AttendancePortal = () => {
               <select
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
               >
                 {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month, idx) => (
                   <option key={idx} value={idx + 1}>{month}</option>
@@ -261,7 +261,7 @@ const AttendancePortal = () => {
               </select>
               <span className="text-gray-600">{selectedYear}</span>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg ">
+            <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg ">
               <Download className="w-4 h-4" />
               Export Report
             </button>

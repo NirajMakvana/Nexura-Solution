@@ -28,7 +28,7 @@ const ReviewManagement = () => {
 
   useEffect(() => {
     loadReviews()
-  }, [filterStatus])
+  }, []) // Load all reviews once
 
   // ESC key to close modal
   useEffect(() => {
@@ -40,13 +40,12 @@ const ReviewManagement = () => {
   const loadReviews = async () => {
     try {
       setLoading(true)
-      const params = {}
-      if (filterStatus !== 'all') params.status = filterStatus
-
-      const data = await adminService.getReviews(params)
+      // Always fetch all to keep global stats accurate
+      const data = await adminService.getReviews()
       setReviews(data)
     } catch (error) {
       console.error('Error loading reviews:', error)
+      toast.error('Failed to load reviews')
     } finally {
       setLoading(false)
     }
@@ -87,11 +86,16 @@ const ReviewManagement = () => {
     }
   }
 
-  const filteredReviews = reviews.filter(review =>
-    review.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    review.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    review.content.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredReviews = reviews.filter(review => {
+    const matchesSearch =
+      review.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.content.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus = filterStatus === 'all' || review.status === filterStatus;
+
+    return matchesSearch && matchesStatus;
+  })
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -125,9 +129,9 @@ const ReviewManagement = () => {
 
   return (
     <AdminLayout>
-      <div>
+      <div className="p-1 md:p-6 space-y-8 animate-fade-in">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Review Management</h1>
             <p className="text-gray-600 mt-1">Manage and moderate customer reviews</p>
@@ -135,21 +139,21 @@ const ReviewManagement = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {[
             { label: 'Total Reviews', value: stats.total, color: 'blue', icon: MessageSquare },
             { label: 'Pending', value: stats.pending, color: 'yellow', icon: Clock },
             { label: 'Approved', value: stats.approved, color: 'green', icon: CheckCircle },
             { label: 'Rejected', value: stats.rejected, color: 'red', icon: XCircle },
           ].map((stat, i) => (
-            <div key={i} className="bg-white rounded-xl shadow-sm border p-5">
+            <div key={i} className="bg-white p-6 rounded-xl shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                  <p className="text-sm text-gray-600">{stat.label}</p>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                 </div>
-                <div className={`p-3 rounded-lg bg-${stat.color}-100`}>
-                  <stat.icon className={`w-5 h-5 text-${stat.color}-600`} />
+                <div className={`p-3 bg-${stat.color}-100 rounded-lg`}>
+                  <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
                 </div>
               </div>
             </div>
@@ -157,16 +161,16 @@ const ReviewManagement = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm border p-4 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by name, email or content..."
+                placeholder="Search by name or ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -189,13 +193,19 @@ const ReviewManagement = () => {
 
         {/* Reviews List */}
         {loading ? (
-          <div className="bg-white rounded-xl shadow-sm border p-6">
-            <TableSkeleton columns={6} rows={5} />
+          <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+            <div className="px-6 py-20 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-500 font-medium">Loading review records...</p>
+            </div>
           </div>
         ) : filteredReviews.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
-            <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">No reviews found</p>
+          <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+            <div className="px-6 py-20 text-center text-gray-500">
+              <MessageSquare className="w-16 h-16 mx-auto mb-4 opacity-20" />
+              <p className="text-xl font-bold">No records found</p>
+              <p className="mt-1">Try adjusting your filters or search terms</p>
+            </div>
           </div>
         ) : (
           <>
@@ -275,7 +285,7 @@ const ReviewManagement = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {filteredReviews.map((review) => (
-                      <tr key={review._id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={review._id} className="hover:bg-gray-50/50 transition-colors group">
                         <td className="px-6 py-4">
                           <div>
                             <p className="font-semibold text-gray-900 text-sm">{review.name}</p>

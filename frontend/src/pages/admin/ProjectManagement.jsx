@@ -363,65 +363,49 @@ const ProjectManagement = () => {
         </div>
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-          <div className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 font-medium">Total Projects</p>
+                <p className="text-sm text-gray-600">Total Projects</p>
                 <p className="text-2xl font-bold text-gray-900">{totalProjects}</p>
-                <div className="flex items-center mt-2">
-                  <TrendingUp className="w-4 h-4 text-blue-500 mr-1" />
-                  <span className="text-sm text-blue-600 font-medium">All projects</span>
-                </div>
               </div>
-              <div className="p-3 bg-blue-100/80 rounded-lg">
+              <div className="p-3 bg-blue-100 rounded-lg">
                 <FolderOpen className="w-6 h-6 text-blue-600" />
               </div>
             </div>
           </div>
 
-          <div className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 font-medium">Completed</p>
+                <p className="text-sm text-gray-600">Completed</p>
                 <p className="text-2xl font-bold text-gray-900">{completedProjects}</p>
-                <div className="flex items-center mt-2">
-                  <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
-                  <span className="text-sm text-green-600 font-medium">Finished</span>
-                </div>
               </div>
-              <div className="p-3 bg-green-100/80 rounded-lg">
+              <div className="p-3 bg-green-100 rounded-lg">
                 <CheckCircle className="w-6 h-6 text-green-600" />
               </div>
             </div>
           </div>
 
-          <div className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 font-medium">Active Projects</p>
+                <p className="text-sm text-gray-600">Active Projects</p>
                 <p className="text-2xl font-bold text-gray-900">{activeProjects}</p>
-                <div className="flex items-center mt-2">
-                  <Clock className="w-4 h-4 text-yellow-500 mr-1" />
-                  <span className="text-sm text-yellow-600 font-medium">In progress</span>
-                </div>
               </div>
-              <div className="p-3 bg-yellow-100/80 rounded-lg">
+              <div className="p-3 bg-yellow-100 rounded-lg">
                 <Clock className="w-6 h-6 text-yellow-600" />
               </div>
             </div>
           </div>
 
-          <div className="glass p-6 rounded-xl shadow-premium border border-white/20 hover-lift transition-all">
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 font-medium">Total Revenue</p>
+                <p className="text-sm text-gray-600">Total Revenue</p>
                 <p className="text-2xl font-bold text-gray-900">₹{totalRevenue.toLocaleString()}</p>
-                <div className="flex items-center mt-2">
-                  <DollarSign className="w-4 h-4 text-purple-500 mr-1" />
-                  <span className="text-sm text-purple-600 font-medium">Earned</span>
-                </div>
               </div>
-              <div className="p-3 bg-purple-100/80 rounded-lg">
+              <div className="p-3 bg-purple-100 rounded-lg">
                 <DollarSign className="w-6 h-6 text-purple-600" />
               </div>
             </div>
