@@ -3,6 +3,7 @@ import { Calendar, Plus, FileText, CheckCircle, XCircle, Clock, Filter, Search, 
 import EmployeeLayout from '../../components/employee/EmployeeLayout'
 import { employeeService } from '../../services/employeeService'
 import { toast } from 'react-hot-toast'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const LeaveRequests = () => {
   const [showRequestModal, setShowRequestModal] = useState(false)
@@ -23,8 +24,6 @@ const LeaveRequests = () => {
   const livePreviewDays = formData.startDate && formData.endDate
     ? Math.ceil((new Date(formData.endDate) - new Date(formData.startDate)) / (1000 * 60 * 60 * 24)) + 1
     : null
-  // Get current employee
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
 
   useEffect(() => {
     loadLeaves()
@@ -306,7 +305,13 @@ const LeaveRequests = () => {
               <tbody className="divide-y divide-gray-100">
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-10 text-center text-gray-500 text-sm">Loading leave requests...</td>
+                    <td colSpan={7} className="px-6 py-10 text-center">
+                      <div className="space-y-3">
+                        <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                        <SkeletonBox className="h-4 w-1/2 mx-auto" />
+                        <SkeletonBox className="h-4 w-2/3 mx-auto" />
+                      </div>
+                    </td>
                   </tr>
                 ) : filteredLeaves.length === 0 ? (
                   <tr>

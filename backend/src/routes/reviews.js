@@ -26,6 +26,24 @@ router.get('/public', async (req, res) => {
     }
 });
 
+// Get review stats (public)
+router.get('/stats', async (req, res) => {
+    try {
+        const approved = await Review.find({ status: 'Approved' });
+        const totalReviews = approved.length;
+        const avgRating = totalReviews > 0
+            ? (approved.reduce((sum, r) => sum + (r.rating || 0), 0) / totalReviews).toFixed(1)
+            : 0;
+        const ratingDistribution = [5, 4, 3, 2, 1].map(star => ({
+            star,
+            count: approved.filter(r => r.rating === star).length
+        }));
+        res.json({ totalReviews, avgRating: parseFloat(avgRating), ratingDistribution });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching review stats', error: error.message });
+    }
+});
+
 // Create a review (Public)
 router.post('/', async (req, res) => {
     try {
@@ -74,6 +92,21 @@ router.put('/:id/reject', protect, authorize('admin', 'manager', 'hr'), async (r
         res.json(review);
     } catch (error) {
         res.status(400).json({ message: 'Error rejecting review', error: error.message });
+    }
+});
+
+// Unpublish a review (Admin)
+router.put('/:id/unpublish', protect, authorize('admin', 'manager', 'hr'), async (req, res) => {
+    try {
+        const review = await Review.findByIdAndUpdate(
+            req.params.id,
+            { status: 'Pending', isPublished: false, reviewedBy: req.user._id },
+            { new: true }
+        );
+        if (!review) return res.status(404).json({ message: 'Review not found' });
+        res.json(review);
+    } catch (error) {
+        res.status(400).json({ message: 'Error unpublishing review', error: error.message });
     }
 });
 

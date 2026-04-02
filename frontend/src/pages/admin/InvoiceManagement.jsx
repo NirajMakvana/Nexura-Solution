@@ -80,6 +80,23 @@ const InvoiceManagement = () => {
     }
   }
 
+  const filteredInvoices = invoices.filter(invoice => {
+    const matchesSearch =
+      invoice.invoiceNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      invoice.client?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      invoice.project?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesFilter = filterStatus === 'all' || invoice.status.toLowerCase() === filterStatus.toLowerCase()
+    return matchesSearch && matchesFilter
+  })
+
+  const totalPages = Math.ceil(filteredInvoices.length / ITEMS_PER_PAGE)
+  const paginatedInvoices = filteredInvoices.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  )
+  const handleSearch = (val) => { setSearchTerm(val); setCurrentPage(1) }
+  const handleFilterStatus = (val) => { setFilterStatus(val); setCurrentPage(1) }
+
   const handleExport = () => {
     const headers = [
       { key: 'invoiceNumber', label: 'Invoice #' },
@@ -99,23 +116,6 @@ const InvoiceManagement = () => {
 
     exportToCSV(dataToExport, headers, 'Invoices_Export.csv')
   }
-
-  const filteredInvoices = invoices.filter(invoice => {
-    const matchesSearch =
-      invoice.invoiceNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      invoice.client?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      invoice.project?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filterStatus === 'all' || invoice.status.toLowerCase() === filterStatus.toLowerCase()
-    return matchesSearch && matchesFilter
-  })
-
-  const totalPages = Math.ceil(filteredInvoices.length / ITEMS_PER_PAGE)
-  const paginatedInvoices = filteredInvoices.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  )
-  const handleSearch = (val) => { setSearchTerm(val); setCurrentPage(1) }
-  const handleFilterStatus = (val) => { setFilterStatus(val); setCurrentPage(1) }
 
   const handleAddItem = () => {
     setNewInvoice({

@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react'
 import { Clock, Calendar, CheckCircle, XCircle, MapPin, Download, TrendingUp, Play, Square } from 'lucide-react'
 import EmployeeLayout from '../../components/employee/EmployeeLayout'
 import { employeeService } from '../../services/employeeService'
+import { useAuthStore } from '../../store/authStore'
 import { toast } from 'react-hot-toast'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const AttendancePortal = () => {
+  const { user } = useAuthStore()
   const [currentTime, setCurrentTime] = useState(new Date())
   const [isClockIn, setIsClockIn] = useState(false)
   const [hasCompletedShift, setHasCompletedShift] = useState(false)
@@ -20,8 +23,6 @@ const AttendancePortal = () => {
     totalHours: 0,
     avgHours: 0
   })
-  // Get current employee
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
 
   // Update current time every second
   useEffect(() => {
@@ -288,8 +289,12 @@ const AttendancePortal = () => {
               <tbody className="divide-y divide-gray-100">
                 {loading ? (
                   <tr>
-                    <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
-                      Loading attendance records...
+                    <td colSpan="6" className="px-6 py-8 text-center">
+                      <div className="space-y-3">
+                        <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                        <SkeletonBox className="h-4 w-1/2 mx-auto" />
+                        <SkeletonBox className="h-4 w-2/3 mx-auto" />
+                      </div>
                     </td>
                   </tr>
                 ) : (attendanceRecords || []).length === 0 ? (

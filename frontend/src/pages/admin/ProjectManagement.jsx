@@ -18,6 +18,8 @@ import {
   X
 } from 'lucide-react'
 import ConfirmModal from '../../components/ui/ConfirmModal'
+import Spinner from '../../components/ui/Spinner'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const ProjectManagement = () => {
   const [projects, setProjects] = useState([])
@@ -327,10 +329,14 @@ const ProjectManagement = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading projects...</p>
+        <div className="flex items-center justify-center h-64 px-4">
+          <div className="text-center max-w-md w-full">
+            <Spinner variant="blue" size={48} />
+            <div className="mt-4 space-y-3">
+              <SkeletonBox className="h-4 w-56 mx-auto" />
+              <SkeletonBox className="h-4 w-72 mx-auto" />
+              <SkeletonBox className="h-4 w-64 mx-auto" />
+            </div>
           </div>
         </div>
       </AdminLayout>

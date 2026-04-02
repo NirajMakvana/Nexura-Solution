@@ -223,7 +223,7 @@ const TeamOverview = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredMembers.map((member) => (
           <div
-            key={member.id}
+            key={member._id || member.id}
             onClick={() => setSelectedMember(member)}
             className="glass rounded-xl p-6 shadow-premium border border-white/20 hover-lift transition-all cursor-pointer group"
           >
@@ -295,14 +295,14 @@ const TeamOverview = () => {
             <div className="mb-4">
               <h4 className="text-sm font-medium text-gray-900 mb-2">Skills</h4>
               <div className="flex flex-wrap gap-1">
-                {member.skills.slice(0, 3).map((skill, index) => (
+                {(member.skills || []).slice(0, 3).map((skill, index) => (
                   <span key={index} className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
                     {skill}
                   </span>
                 ))}
-                {member.skills.length > 3 && (
+                {(member.skills || []).length > 3 && (
                   <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
-                    +{member.skills.length - 3}
+                    +{(member.skills || []).length - 3}
                   </span>
                 )}
               </div>
@@ -419,7 +419,7 @@ const TeamOverview = () => {
             <div className="mb-6">
               <h4 className="font-semibold text-gray-900 mb-3">Skills & Expertise</h4>
               <div className="flex flex-wrap gap-2">
-                {selectedMember.skills.map((skill, index) => (
+                {(selectedMember.skills || []).map((skill, index) => (
                   <span key={index} className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
                     {skill}
                   </span>
@@ -431,7 +431,7 @@ const TeamOverview = () => {
             <div className="mb-6">
               <h4 className="font-semibold text-gray-900 mb-3">Recent Tasks</h4>
               <div className="space-y-2">
-                {selectedMember.recentTasks.map((task, index) => (
+                {(selectedMember.recentTasks || []).map((task, index) => (
                   <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900">{task.name}</p>

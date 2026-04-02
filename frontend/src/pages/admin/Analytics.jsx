@@ -15,6 +15,7 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const Analytics = () => {
   const [timeRange, setTimeRange] = useState('year')
@@ -215,7 +216,12 @@ const Analytics = () => {
           <div className="h-80">
             {loading ? (
               <div className="flex items-center justify-center h-full">
-                <p className="text-gray-500">Loading chart data...</p>
+                <div className="w-full max-w-md space-y-3">
+                  <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                  <SkeletonBox className="h-4 w-2/3 mx-auto" />
+                  <SkeletonBox className="h-4 w-1/2 mx-auto" />
+                  <SkeletonBox className="h-4 w-5/6 mx-auto" />
+                </div>
               </div>
             ) : filteredData.length === 0 ? (
               <div className="flex items-center justify-center h-full">
@@ -256,7 +262,12 @@ const Analytics = () => {
           <div className="bg-white rounded-xl shadow-sm border p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Project Categories</h2>
             {loading ? (
-              <p className="text-center text-gray-500 py-8">Loading...</p>
+              <div className="space-y-4 py-6">
+                <SkeletonBox className="h-4 w-5/6 mx-auto" />
+                <SkeletonBox className="h-4 w-4/6 mx-auto" />
+                <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                <SkeletonBox className="h-4 w-2/3 mx-auto" />
+              </div>
             ) : analytics.projectStats.length === 0 ? (
               <p className="text-center text-gray-500 py-8">No project data available</p>
             ) : (
@@ -287,7 +298,12 @@ const Analytics = () => {
           <div className="bg-white rounded-xl shadow-sm border p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Top Clients</h2>
             {loading ? (
-              <p className="text-center text-gray-500 py-8">Loading...</p>
+              <div className="space-y-4 py-6">
+                <SkeletonBox className="h-4 w-5/6 mx-auto" />
+                <SkeletonBox className="h-4 w-4/6 mx-auto" />
+                <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                <SkeletonBox className="h-4 w-2/3 mx-auto" />
+              </div>
             ) : analytics.clientStats.length === 0 ? (
               <p className="text-center text-gray-500 py-8">No client data available</p>
             ) : (

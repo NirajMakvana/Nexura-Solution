@@ -19,6 +19,7 @@ import EmployeeLayout from '../../components/employee/EmployeeLayout'
 import { employeeService } from '../../services/employeeService'
 import { toast } from 'react-hot-toast'
 import { useAuthStore } from '../../store/authStore'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const EmployeeDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -312,8 +313,11 @@ const EmployeeDashboard = () => {
           </div>
           {loading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
-              <p className="text-gray-500 mt-2">Loading tasks...</p>
+              <div className="space-y-3 max-w-sm mx-auto">
+                <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                <SkeletonBox className="h-4 w-1/2 mx-auto" />
+                <SkeletonBox className="h-4 w-2/3 mx-auto" />
+              </div>
             </div>
           ) : recentTasks.length === 0 ? (
             <div className="text-center py-8">

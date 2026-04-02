@@ -1,48 +1,42 @@
 import api from './api'
+import { useAuthStore } from '../store/authStore'
 
 export const authService = {
   async login(email, password) {
     const response = await api.post('/auth/login', { email, password })
     const { token, ...user } = response.data
-
-    // We set these for backward compatibility if needed, 
-    // but the store will handle the main persistence now
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(user))
-
+    // Persist only via Zustand store (single source of truth)
+    useAuthStore.getState().login(token, user)
     return response.data
   },
 
   async register(userData) {
     const response = await api.post('/auth/register', userData)
     const { token, ...user } = response.data
-
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(user))
-
+    useAuthStore.getState().login(token, user)
     return response.data
   },
 
   async logout() {
+    // Clear all legacy keys + Zustand store
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     localStorage.removeItem('currentEmployee')
     localStorage.removeItem('employeeAuthenticated')
     sessionStorage.removeItem('adminAuthenticated')
-    localStorage.removeItem('nexura-auth')
+    useAuthStore.getState().logout()
   },
 
   getCurrentUser() {
-    const userStr = localStorage.getItem('user')
-    return userStr ? JSON.parse(userStr) : null
+    return useAuthStore.getState().user
   },
 
   getToken() {
-    return localStorage.getItem('token')
+    return useAuthStore.getState().token
   },
 
   isAuthenticated() {
-    return !!this.getToken()
+    return useAuthStore.getState().isAuthenticated
   },
 
   async updatePassword(currentPassword, newPassword) {

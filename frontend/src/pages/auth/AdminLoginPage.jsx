@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import Logo from '../../components/ui/logo'
+import Spinner from '../../components/ui/Spinner'
 import { authService } from '../../services/authService'
 import { useAuthStore } from '../../store/authStore'
 
@@ -21,7 +22,6 @@ const AdminLoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
-  const { login } = useAuthStore()
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
@@ -55,18 +55,11 @@ const AdminLoginPage = () => {
       // Check if user is admin
       if (response.role !== 'admin' && response.role !== 'hr') {
         toast.error('Access denied. Admin credentials required.')
+        // Undo the login that authService already performed
+        useAuthStore.getState().logout()
         setIsLoading(false)
         return
       }
-
-      // Store user in auth store correctly
-      login(response.token, {
-        _id: response._id,
-        firstName: response.firstName,
-        lastName: response.lastName,
-        email: response.email,
-        role: response.role,
-      })
 
       sessionStorage.setItem('adminAuthenticated', 'true')
       toast.success('Login successful! Redirecting to admin panel...')
@@ -170,7 +163,7 @@ const AdminLoginPage = () => {
             >
               {isLoading ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  <Spinner variant="white" size={20} className="mr-2" />
                   Authenticating...
                 </>
               ) : (

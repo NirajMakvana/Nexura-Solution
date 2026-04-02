@@ -14,6 +14,8 @@ import {
 import EmployeeLayout from '../../components/employee/EmployeeLayout';
 import { employeeService } from '../../services/employeeService';
 import { toast } from 'react-hot-toast';
+import Spinner from '../../components/ui/Spinner'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const ProjectTimeline = () => {
     const [projects, setProjects] = useState([]);
@@ -115,8 +117,12 @@ const ProjectTimeline = () => {
 
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-                        <Loader2 className="w-12 h-12 animate-spin text-green-600" />
-                        <p className="mt-4 text-gray-500 font-medium tracking-tight">Loading your timeline data...</p>
+                        <Spinner variant="green" size={48} />
+                        <div className="mt-4 space-y-3">
+                            <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                            <SkeletonBox className="h-4 w-2/3 mx-auto" />
+                            <SkeletonBox className="h-4 w-5/6 mx-auto" />
+                        </div>
                     </div>
                 ) : projects.length === 0 ? (
                     <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-12 text-center text-gray-500 min-h-[400px] flex flex-col justify-center items-center">

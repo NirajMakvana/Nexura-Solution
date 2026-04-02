@@ -20,6 +20,7 @@ import { adminService } from '../../services/adminService';
 import { toast } from 'react-hot-toast';
 
 import ConfirmModal from '../../components/ui/ConfirmModal'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const PayrollManagement = () => {
     const [payslips, setPayslips] = useState([]);
@@ -59,8 +60,8 @@ const PayrollManagement = () => {
                 adminService.getPayslips(),
                 adminService.getEmployees()
             ]);
-            setPayslips(payslipData);
-            setEmployees(employeeData);
+            setPayslips(payslipData || []);
+            setEmployees(employeeData || []);
         } catch (error) {
             console.error('Error loading data:', error);
             toast.error('Failed to load payroll data');
@@ -236,8 +237,11 @@ const PayrollManagement = () => {
                                 {loading ? (
                                     <tr>
                                         <td colSpan="6" className="px-6 py-20 text-center">
-                                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                                            <p className="mt-4 text-gray-500 font-medium">Loading payroll records...</p>
+                                            <div className="space-y-3">
+                                                <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                                                <SkeletonBox className="h-4 w-1/2 mx-auto" />
+                                                <SkeletonBox className="h-4 w-2/3 mx-auto" />
+                                            </div>
                                         </td>
                                     </tr>
                                 ) : filteredPayslips.length === 0 ? (

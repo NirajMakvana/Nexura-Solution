@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import { useEffect, useState } from 'react'
+import Spinner from '../ui/Spinner'
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, isAuthenticated } = useAuthStore()
@@ -14,7 +15,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   if (!isReady) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <Spinner
+          variant={allowedRoles.includes('employee') ? 'green' : 'blue'}
+          size={48}
+        />
       </div>
     )
   }

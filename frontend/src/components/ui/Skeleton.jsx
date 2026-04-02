@@ -19,8 +19,8 @@ export const SkeletonAvatar = ({ className = 'w-12 h-12' }) => (
     <div className={`animate-pulse bg-gray-200 rounded-full ${className}`}></div>
 )
 
-export const TableSkeleton = ({ columns = 5, rows = 5 }) => (
-    <div className="w-full bg-white rounded-xl shadow-sm border overflow-hidden">
+export const TableSkeleton = ({ columns = 5, rows = 5, withContainer = true }) => {
+    const table = (
         <div className="overflow-x-auto">
             <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
@@ -55,8 +55,16 @@ export const TableSkeleton = ({ columns = 5, rows = 5 }) => (
                 </tbody>
             </table>
         </div>
-    </div>
-)
+    )
+
+    if (!withContainer) return table
+
+    return (
+        <div className="w-full bg-white rounded-xl shadow-sm border overflow-hidden">
+            {table}
+        </div>
+    )
+}
 
 export const CardSkeleton = () => (
     <div className="bg-white rounded-xl shadow-sm border p-6">

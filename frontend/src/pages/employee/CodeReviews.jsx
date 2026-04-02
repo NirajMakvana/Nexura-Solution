@@ -21,6 +21,7 @@ import {
 import EmployeeLayout from '../../components/employee/EmployeeLayout'
 import { employeeService } from '../../services/employeeService'
 import { toast } from 'react-hot-toast'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const CodeReviews = () => {
   const [reviews, setReviews] = useState([])
@@ -270,8 +271,11 @@ const CodeReviews = () => {
         {/* Reviews List */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-            <p className="mt-4 text-gray-500">Loading reviews...</p>
+            <div className="space-y-3 max-w-md mx-auto">
+              <SkeletonBox className="h-4 w-3/4 mx-auto" />
+              <SkeletonBox className="h-4 w-2/3 mx-auto" />
+              <SkeletonBox className="h-4 w-5/6 mx-auto" />
+            </div>
           </div>
         ) : filteredReviews.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm border p-12 text-center">

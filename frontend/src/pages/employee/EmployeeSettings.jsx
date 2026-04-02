@@ -19,7 +19,7 @@ import { toast } from 'react-hot-toast'
 import { useAuthStore } from '../../store/authStore'
 
 const EmployeeSettings = () => {
-    const { user: authUser, setAuthUser } = useAuthStore()
+    const { user: authUser, updateUser } = useAuthStore()
     const [activeTab, setActiveTab] = useState('profile')
     const [loading, setLoading] = useState(true)
     const [isSaving, setIsSaving] = useState(false)
@@ -78,8 +78,7 @@ const EmployeeSettings = () => {
 
             // Optionally update auth store if basic details changed
             if (authUser) {
-                setAuthUser({
-                    ...authUser,
+                updateUser({
                     firstName: profileData.firstName,
                     lastName: profileData.lastName,
                 })

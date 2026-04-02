@@ -18,6 +18,7 @@ import {
     BookOpen
 } from 'lucide-react'
 import ConfirmModal from '../../components/ui/ConfirmModal'
+import { TableSkeleton } from '../../components/ui/Skeleton'
 
 const CATEGORIES = [
     { id: 'web-development', name: 'Web Development' },
@@ -256,9 +257,8 @@ const BlogManagement = () => {
                 {/* Table */}
                 <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
                     {loading ? (
-                        <div className="px-6 py-20 text-center">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                            <p className="mt-4 text-gray-500 font-medium">Loading blog records...</p>
+                        <div className="p-6">
+                            <TableSkeleton columns={7} rows={5} withContainer={false} />
                         </div>
                     ) : filtered.length === 0 ? (
                         <div className="px-6 py-20 text-center text-gray-500">

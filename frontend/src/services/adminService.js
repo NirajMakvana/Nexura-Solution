@@ -50,13 +50,15 @@ export const adminService = {
   // Attendance Management
   async getAttendance(params = {}) {
     const response = await api.get('/attendance', { params })
-    return response.data
+    // Backend returns paginated { data, total } — unwrap to array
+    return Array.isArray(response.data) ? response.data : (response.data?.data || [])
   },
 
   // Leave Management
   async getLeaves(params = {}) {
     const response = await api.get('/leaves', { params })
-    return response.data
+    // Backend returns paginated { data, total } — unwrap to array
+    return Array.isArray(response.data) ? response.data : (response.data?.data || [])
   },
 
   async approveLeave(leaveId) {
@@ -72,7 +74,8 @@ export const adminService = {
   // Payroll Management
   async getPayslips(params = {}) {
     const response = await api.get('/payroll', { params })
-    return response.data
+    // Backend returns paginated { data, total } — unwrap to array
+    return Array.isArray(response.data) ? response.data : (response.data?.data || [])
   },
 
   async createPayslip(data) {
@@ -93,7 +96,8 @@ export const adminService = {
   // Project Management
   async getProjects() {
     const response = await api.get('/projects')
-    return response.data
+    // Backend returns paginated { data, total } — unwrap to array
+    return Array.isArray(response.data) ? response.data : (response.data?.data || [])
   },
 
   async getProject(id) {
@@ -183,7 +187,8 @@ export const adminService = {
     const response = await api.get('/tasks', {
       params: { _t: Date.now() } // Cache busting
     })
-    return response.data
+    // Backend returns paginated { data, total } — unwrap to array
+    return Array.isArray(response.data) ? response.data : (response.data?.data || [])
   },
 
   async getTask(id) {

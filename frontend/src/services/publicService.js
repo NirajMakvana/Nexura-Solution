@@ -39,7 +39,7 @@ export const publicService = {
 
   // Get blog posts (public)
   async getBlogPosts() {
-    const response = await api.get('/blog')
+    const response = await api.get('/blogs')
     return response.data
   },
 

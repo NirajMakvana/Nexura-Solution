@@ -1,13 +1,9 @@
 import api from './api'
+import { useAuthStore } from '../store/authStore'
 
-// Helper to get user from Zustand persist store
+// Helper to get user from Zustand store (single source of truth)
 const getStoredUser = () => {
-  try {
-    const authStorage = localStorage.getItem('nexura-auth')
-    return authStorage ? JSON.parse(authStorage)?.state?.user || {} : {}
-  } catch {
-    return {}
-  }
+  return useAuthStore.getState().user || {}
 }
 
 export const employeeService = {
@@ -62,7 +58,8 @@ export const employeeService = {
     const response = await api.get('/leaves', {
       params: { employee: user._id }
     })
-    return response.data
+    // Backend returns paginated { data, total } — unwrap to array
+    return Array.isArray(response.data) ? response.data : (response.data?.data || [])
   },
 
   async requestLeave(leaveData) {

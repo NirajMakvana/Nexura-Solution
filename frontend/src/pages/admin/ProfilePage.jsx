@@ -22,6 +22,8 @@ import { adminService } from '../../services/adminService'
 import { authService } from '../../services/authService'
 import { useAuthStore } from '../../store/authStore'
 import { toast } from 'react-hot-toast'
+import Spinner from '../../components/ui/Spinner'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false)
@@ -225,10 +227,14 @@ const ProfilePage = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading profile...</p>
+        <div className="flex items-center justify-center h-64 px-4">
+          <div className="text-center max-w-md w-full">
+            <Spinner variant="blue" size={48} />
+            <div className="mt-4 space-y-3">
+              <SkeletonBox className="h-4 w-3/4 mx-auto" />
+              <SkeletonBox className="h-4 w-1/2 mx-auto" />
+              <SkeletonBox className="h-4 w-2/3 mx-auto" />
+            </div>
           </div>
         </div>
       </AdminLayout>

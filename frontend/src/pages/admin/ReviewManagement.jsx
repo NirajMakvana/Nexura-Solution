@@ -201,9 +201,8 @@ const ReviewManagement = () => {
         {/* Reviews List */}
         {loading ? (
           <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-            <div className="px-6 py-20 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-gray-500 font-medium">Loading review records...</p>
+            <div className="p-6">
+              <TableSkeleton columns={6} rows={5} withContainer={false} />
             </div>
           </div>
         ) : filteredReviews.length === 0 ? (

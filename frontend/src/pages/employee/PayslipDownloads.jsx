@@ -14,6 +14,7 @@ import { employeeService } from '../../services/employeeService';
 import { useAuthStore } from '../../store/authStore';
 import { toast } from 'react-hot-toast';
 import html2pdf from 'html2pdf.js';
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const PayslipDownloads = () => {
     const [payslips, setPayslips] = useState([]);
@@ -160,8 +161,11 @@ const PayslipDownloads = () => {
                                 {loading ? (
                                     <tr>
                                         <td colSpan={7} className="px-6 py-12 text-center">
-                                            <Loader2 className="w-7 h-7 animate-spin text-green-600 mx-auto mb-2" />
-                                            <p className="text-sm text-gray-500">Loading payslips...</p>
+                                            <div className="space-y-3">
+                                                <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                                                <SkeletonBox className="h-4 w-1/2 mx-auto" />
+                                                <SkeletonBox className="h-4 w-2/3 mx-auto" />
+                                            </div>
                                         </td>
                                     </tr>
                                 ) : payslips.length === 0 ? (

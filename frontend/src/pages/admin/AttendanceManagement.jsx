@@ -12,6 +12,7 @@ import {
 import AdminLayout from '../../components/admin/AdminLayout';
 import { adminService } from '../../services/adminService';
 import { toast } from 'react-hot-toast';
+import { SkeletonBox } from '../../components/ui/Skeleton'
 
 const AttendanceManagement = () => {
     const [attendance, setAttendance] = useState([]);
@@ -36,8 +37,9 @@ const AttendanceManagement = () => {
                 adminService.getAttendance(params),
                 adminService.getEmployees()
             ]);
-            setAttendance(attendanceData || []);
-            setEmployees(employeeData || []);
+            // getAttendance returns paginated {data, total}, getEmployees returns array
+            setAttendance(Array.isArray(attendanceData) ? attendanceData : (attendanceData?.data || []));
+            setEmployees(Array.isArray(employeeData) ? employeeData : (employeeData?.data || []));
         } catch (error) {
             console.error('Error loading attendance:', error);
             toast.error('Failed to load records');
@@ -151,8 +153,11 @@ const AttendanceManagement = () => {
                                 {loading ? (
                                     <tr>
                                         <td colSpan="6" className="px-6 py-20 text-center">
-                                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                                            <p className="mt-4 text-gray-500 font-medium">Loading attendance records...</p>
+                                            <div className="space-y-3">
+                                                <SkeletonBox className="h-4 w-3/4 mx-auto" />
+                                                <SkeletonBox className="h-4 w-1/2 mx-auto" />
+                                                <SkeletonBox className="h-4 w-2/3 mx-auto" />
+                                            </div>
                                         </td>
                                     </tr>
                                 ) : filteredAttendance.length === 0 ? (

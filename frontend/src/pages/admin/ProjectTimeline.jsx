@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { adminService } from '../../services/adminService'
 import { toast } from 'react-hot-toast'
+import Spinner from '../../components/ui/Spinner'
+import { SkeletonBox } from '../../components/ui/Skeleton'
 import {
   Calendar,
   Clock,
@@ -140,10 +142,14 @@ const ProjectTimeline = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading timeline data...</p>
+        <div className="flex items-center justify-center h-96 px-4">
+          <div className="text-center max-w-md w-full">
+            <Spinner variant="blue" size={48} />
+            <div className="mt-4 space-y-3">
+              <SkeletonBox className="h-4 w-3/4 mx-auto" />
+              <SkeletonBox className="h-4 w-2/3 mx-auto" />
+              <SkeletonBox className="h-4 w-5/6 mx-auto" />
+            </div>
           </div>
         </div>
       </AdminLayout>
