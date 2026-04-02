@@ -43,34 +43,50 @@ router.get('/profile', async (req, res) => {
 router.get('/team', async (req, res) => {
   try {
     const employees = await Employee.find({ isActive: true })
-      .populate('user', 'firstName lastName email role')
+      .populate('user', 'firstName lastName email role avatar phone')
       .select('user position department joinDate skills')
       .sort({ joinDate: -1 })
 
-    // Transform data for frontend
-    const teamMembers = employees.map(emp => ({
-      _id: emp._id,
-      firstName: emp.user?.firstName || '',
-      lastName: emp.user?.lastName || '',
-      email: emp.user?.email || '',
-      position: emp.position,
-      role: emp.user?.role || emp.position,
-      department: emp.department,
-      joinDate: emp.joinDate,
-      skills: emp.skills || [],
-      status: 'Online', // Default status
-      tasksCompleted: 0,
-      tasksInProgress: 0,
-      tasksPending: 0,
-      performance: 85,
-      productivity: 90,
-      currentProject: 'Various Projects',
-      lastActive: 'Just now',
-      bio: `${emp.position} at Nexura Solutions`,
-      phone: '+91 XXXXXXXXXX',
-      location: 'Remote',
-      recentTasks: []
-    }))
+    // Get task stats per user in one query
+    const userIds = employees.map(e => e.user?._id).filter(Boolean)
+    const tasks = await Task.find({ assignedTo: { $in: userIds } })
+      .select('assignedTo status')
+
+    const taskMap = {}
+    tasks.forEach(t => {
+      const uid = t.assignedTo.toString()
+      if (!taskMap[uid]) taskMap[uid] = { completed: 0, inProgress: 0, pending: 0, total: 0 }
+      taskMap[uid].total++
+      if (t.status === 'Completed') taskMap[uid].completed++
+      else if (t.status === 'In Progress') taskMap[uid].inProgress++
+      else taskMap[uid].pending++
+    })
+
+    const teamMembers = employees.map(emp => {
+      const uid = emp.user?._id?.toString()
+      const t = taskMap[uid] || { completed: 0, inProgress: 0, pending: 0, total: 0 }
+      const performance = t.total > 0 ? Math.round((t.completed / t.total) * 100) : 0
+      return {
+        _id: emp._id,
+        firstName: emp.user?.firstName || '',
+        lastName: emp.user?.lastName || '',
+        email: emp.user?.email || '',
+        phone: emp.user?.phone || '',
+        avatar: emp.user?.avatar || null,
+        position: emp.position,
+        role: emp.user?.role || emp.position,
+        department: emp.department,
+        joinDate: emp.joinDate,
+        skills: emp.skills || [],
+        status: 'Online',
+        tasksCompleted: t.completed,
+        tasksInProgress: t.inProgress,
+        tasksPending: t.pending,
+        performance,
+        productivity: performance,
+        recentTasks: []
+      }
+    })
 
     res.json(teamMembers)
   } catch (error) {

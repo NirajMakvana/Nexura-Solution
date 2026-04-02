@@ -69,8 +69,7 @@ router.get('/activity', authorize('admin', 'hr'), async (req, res) => {
 
         res.json(sortedActivities)
     } catch (error) {
-        console.error('Dashboard activity error:', error)
-        res.status(500).json({ message: 'Error fetching board activities' })
+                res.status(500).json({ message: 'Error fetching board activities' })
     }
 })
 
@@ -113,8 +112,7 @@ router.get('/stats', authorize('admin', 'hr'), async (req, res) => {
             completedProjects
         });
     } catch (error) {
-        console.error('Dashboard stats error:', error);
-        res.status(500).json({ message: 'Error fetching dashboard stats' });
+                res.status(500).json({ message: 'Error fetching dashboard stats' });
     }
 });
 
@@ -209,9 +207,9 @@ router.get('/analytics', authorize('admin'), async (req, res) => {
             avgProjectValue: completedProjects.length > 0 ? Math.round(totalRevenue / completedProjects.length) : 0
         });
     } catch (error) {
-        console.error('Dashboard analytics error:', error);
-        res.status(500).json({ message: 'Error fetching analytics' });
+                res.status(500).json({ message: 'Error fetching analytics' });
     }
 });
 
 export default router
+

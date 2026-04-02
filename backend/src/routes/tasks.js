@@ -108,9 +108,9 @@ router.put('/:id', async (req, res) => {
 
     res.json(task)
   } catch (error) {
-    console.error('Error updating task:', error)
-    res.status(500).json({ message: error.message })
+        res.status(500).json({ message: error.message })
   }
 })
 
 export default router
+

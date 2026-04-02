@@ -47,7 +47,6 @@ router.get('/team', async (req, res) => {
 
     res.json(team)
   } catch (error) {
-    console.error('Error fetching team:', error)
     res.status(500).json({ message: error.message })
   }
 })
