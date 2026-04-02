@@ -109,9 +109,7 @@ router.get('/:id', async (req, res) => {
 // @access  Private (Admin/HR)
 router.post('/', async (req, res) => {
   try {
-    console.log('Creating user with data:', req.body)
     const user = await User.create(req.body)
-    console.log('User created successfully:', user.email)
 
     // Sync: Create Employee record if role is employee, manager or hr
     if (['employee', 'manager', 'hr'].includes(user.role)) {
@@ -130,7 +128,6 @@ router.post('/', async (req, res) => {
           },
           isActive: user.isActive !== undefined ? user.isActive : true
         })
-        console.log('Employee record created for sync')
       } catch (empErr) {
         console.error('Failed to create synced employee record:', empErr)
       }
@@ -146,7 +143,6 @@ router.post('/', async (req, res) => {
 
     res.status(201).json(user)
   } catch (error) {
-    console.error('Error creating user:', error)
     res.status(500).json({ message: error.message })
   }
 })
@@ -185,6 +181,7 @@ router.put('/:id', async (req, res) => {
         { upsert: ['employee', 'manager', 'hr'].includes(user.role) }
       )
     } catch (empErr) {
+      // Non-critical: log sync failure but don't fail the request
       console.error('Failed to sync employee update:', empErr)
     }
 

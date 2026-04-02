@@ -53,19 +53,15 @@ router.post('/', protect, authorize('admin', 'hr'), async (req, res) => {
     try {
         const { employee, month, year, basicSalary, hra, allowances, deductions, status, paymentDate } = req.body;
 
-        console.log('Creating payslip with data:', req.body);
-
         // Validate employee exists
         const employeeExists = await User.findById(employee);
         if (!employeeExists) {
-            console.log('Employee not found:', employee);
             return res.status(400).json({ message: 'Employee not found' });
         }
 
         // Check if payslip already exists for this month/year for this employee
         const existing = await Payslip.findOne({ employee, month, year });
         if (existing) {
-            console.log('Payslip already exists for:', { employee, month, year });
             return res.status(400).json({ message: 'Payslip already exists for this month/year' });
         }
 
@@ -84,10 +80,8 @@ router.post('/', protect, authorize('admin', 'hr'), async (req, res) => {
             paymentDate
         });
 
-        console.log('Payslip created successfully:', payslip._id);
         res.status(201).json(payslip);
     } catch (error) {
-        console.error('Error creating payslip:', error);
         res.status(400).json({ message: 'Error creating payslip', error: error.message });
     }
 });

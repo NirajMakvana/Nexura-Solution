@@ -1,53 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import {
     Settings as SettingsIcon,
-    User,
     Bell,
     Shield,
-    Globe,
-    Mail,
-    Database,
     Palette,
     Save,
     RefreshCw
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
+const DEFAULT_SETTINGS = {
+    companyName: 'Nexura Solutions',
+    companyEmail: 'info@nexurasolutions.com',
+    companyPhone: '+91 1234567890',
+    companyAddress: 'Ahmedabad, Gujarat, India',
+    timezone: 'Asia/Kolkata',
+    dateFormat: 'DD/MM/YYYY',
+    currency: 'INR',
+    emailNotifications: true,
+    pushNotifications: true,
+    smsNotifications: false,
+    weeklyReports: true,
+    twoFactorAuth: false,
+    sessionTimeout: '30',
+    passwordExpiry: '90',
+    theme: 'light',
+    primaryColor: '#3B82F6'
+}
+
 const Settings = () => {
     const [activeTab, setActiveTab] = useState('general');
-    const [settings, setSettings] = useState({
-        // General Settings
-        companyName: 'Nexura Solutions',
-        companyEmail: 'info@nexurasolutions.com',
-        companyPhone: '+91 1234567890',
-        companyAddress: 'Ahmedabad, Gujarat, India',
-        timezone: 'Asia/Kolkata',
-        dateFormat: 'DD/MM/YYYY',
-        currency: 'INR',
-        
-        // Notification Settings
-        emailNotifications: true,
-        pushNotifications: true,
-        smsNotifications: false,
-        weeklyReports: true,
-        
-        // Security Settings
-        twoFactorAuth: false,
-        sessionTimeout: '30',
-        passwordExpiry: '90',
-        
-        // Appearance
-        theme: 'light',
-        primaryColor: '#3B82F6'
+    const [settings, setSettings] = useState(() => {
+        try {
+            const saved = localStorage.getItem('nexura-settings')
+            return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS
+        } catch {
+            return DEFAULT_SETTINGS
+        }
     });
 
     const handleSave = () => {
-        toast.success('Settings saved successfully!');
+        try {
+            localStorage.setItem('nexura-settings', JSON.stringify(settings))
+            toast.success('Settings saved successfully!')
+        } catch {
+            toast.error('Failed to save settings')
+        }
     };
 
     const handleReset = () => {
-        toast.success('Settings reset to default!');
+        setSettings(DEFAULT_SETTINGS)
+        localStorage.removeItem('nexura-settings')
+        toast.success('Settings reset to default!')
     };
 
     const tabs = [
